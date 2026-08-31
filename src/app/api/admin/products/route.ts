@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { createClient, createServiceClient } from "@/lib/supabase/server"
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const supabase = await createClient()
+  const supabase = createServiceClient() || await createClient()
   if (!supabase) {
     return NextResponse.json({ error: "Supabase not configured. Set NEXT_PUBLIC_SUPABASE_URL and keys." }, { status: 400 })
   }
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  const supabase = await createClient()
+  const supabase = (createServiceClient() || await createClient())
   if (!supabase) return NextResponse.json({ products: [] })
   const { data } = await supabase.from("products").select("*, product_images(*), product_variants(*)").order("created_at", { ascending: false })
   return NextResponse.json({ products: data || [] })

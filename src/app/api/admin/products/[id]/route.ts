@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { createClient, createServiceClient } from "@/lib/supabase/server"
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const supabase = await createClient()
+  const supabase = createServiceClient() || await createClient()
   if (!supabase) return NextResponse.json({ error: "Supabase not configured" }, { status: 400 })
   const { data, error } = await supabase.from("products").select("*, product_images(*), product_variants(*)").eq("id", id).single()
   if (error) return NextResponse.json({ error: error.message }, { status: 404 })
@@ -13,7 +13,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const body = await req.json()
-  const supabase = await createClient()
+  const supabase = createServiceClient() || await createClient()
   if (!supabase) return NextResponse.json({ error: "Supabase not configured" }, { status: 400 })
 
   const { data, error } = await supabase.from("products").update({
@@ -56,7 +56,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const supabase = await createClient()
+  const supabase = createServiceClient() || await createClient()
   if (!supabase) return NextResponse.json({ error: "Supabase not configured" }, { status: 400 })
   const { error } = await supabase.from("products").delete().eq("id", id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -68,7 +68,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id } = await params
   const body = await req.json()
   if (body.action === "duplicate") {
-    const supabase = await createClient()
+    const supabase = createServiceClient() || await createClient()
     if (!supabase) return NextResponse.json({ error: "Supabase not configured" }, { status: 400 })
     const { data: orig } = await supabase.from("products").select("*, product_images(*), product_variants(*)").eq("id", id).single()
     if (!orig) return NextResponse.json({ error: "Not found" }, { status: 404 })
@@ -112,7 +112,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   }
   // Toggle
   if (body.action === "toggle") {
-    const supabase = await createClient()
+    const supabase = createServiceClient() || await createClient()
     if (!supabase) return NextResponse.json({ error: "Supabase not configured" }, { status: 400 })
     const { data, error } = await supabase.from("products").update({ [body.field]: body.value }).eq("id", id).select().single()
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
