@@ -17,7 +17,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Link href="/admin" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">DASHBOARD</Link>
             <Link href="/admin/products" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">PRODUITS</Link>
             <Link href="/admin/orders" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">COMMANDES</Link>
+            <Link href="/admin/banners" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">BANNIÈRES</Link>
             <Link href="/admin/categories" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">CATÉGORIES</Link>
+            <Link href="/admin/customers" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">CLIENTS</Link>
             <Link href="/admin/settings" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">PARAMÈTRES</Link>
           </nav>
         </aside>
@@ -40,6 +42,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/admin" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">DASHBOARD</Link>
           <Link href="/admin/products" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">PRODUITS</Link>
           <Link href="/admin/orders" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">COMMANDES</Link>
+          <Link href="/admin/banners" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">BANNIÈRES</Link>
           <Link href="/admin/categories" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">CATÉGORIES</Link>
           <Link href="/admin/customers" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">CLIENTS</Link>
           <Link href="/admin/settings" className="block py-2 px-3 hover:bg-white/10 tracking-widest text-xs">PARAMÈTRES</Link>
