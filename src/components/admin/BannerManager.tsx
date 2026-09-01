@@ -66,8 +66,19 @@ export function BannerManager() {
           {form.image_url && <a href={form.image_url} target="_blank" className="text-xs underline">Aperçu</a>}
         </div>
         <Button onClick={create} className="mt-4 rounded-none tracking-widest text-xs">CRÉER BANNIÈRE</Button>
-        <p className="text-xs text-zinc-500 mt-2">La première bannière active est utilisée comme HERO plein écran. Les suivantes pour sections éditoriales.</p>
+        <p className="text-xs text-zinc-500 mt-2">Chaque bannière ACTIVE = 1 slide du carousel HERO. Ajoutez autant d&apos;images que vous voulez — le carousel change automatiquement toutes les <b>3 secondes</b> (ex: 3 images = boucle de 9s, 5 images = 15s). Flèches, dots et swipe mobile inclus.</p>
       </div>
+
+      {(() => {
+        const activeCount = banners.filter(b => b.is_active).length
+        return activeCount > 0 ? (
+          <div className="bg-[#f9f1e8] border border-amber-100 px-4 py-3 text-xs tracking-wide flex flex-wrap gap-4">
+            <span><b>{activeCount}</b> slide{activeCount > 1 ? "s" : ""} ACTIVE(S)</span>
+            <span className="text-zinc-500">• Cycle: {activeCount * 3}s (3s / image) • Tourne en boucle</span>
+            {activeCount === 1 && <span className="text-amber-700">• Ajoutez une 2e image pour activer le défilement</span>}
+          </div>
+        ) : null
+      })()}
 
       <div className="grid md:grid-cols-2 gap-4">
         {banners.map(b=> (

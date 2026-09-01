@@ -2,12 +2,15 @@ import Link from "next/link"
 import Image from "next/image"
 import { getProducts } from "@/lib/products"
 import { getSiteImages } from "@/lib/siteImages"
+import { getBanners } from "@/lib/banners"
 import { ProductGrid } from "@/components/product/ProductGrid"
+import { HeroCarousel } from "@/components/home/HeroCarousel"
 
 export default async function HomePage() {
-  const [featured, siteImages] = await Promise.all([
+  const [featured, siteImages, banners] = await Promise.all([
     getProducts({ limit: 6 }),
     getSiteImages(),
+    getBanners(),
   ])
 
   // Helper to get image url with fallback
@@ -15,43 +18,48 @@ export default async function HomePage() {
 
   return (
     <div className="bg-[#fdfcf8]">
-      {/* HERO - LUXÈRA inspired: beige, left text, right image - DYNAMIC via site_images */}
-      <section className="bg-[#f9f1e8] overflow-hidden">
-        <div className="mx-auto max-w-[1400px] px-4 lg:px-8">
-          <div className="grid md:grid-cols-2 min-h-[540px] lg:min-h-[620px] items-center gap-8 py-8 md:py-0">
-            <div className="order-2 md:order-1 py-8 md:py-16">
-              <p className="text-xs tracking-[0.35em] text-zinc-500 mb-4">NOUVELLE COLLECTION</p>
-              <h1 className="text-4xl lg:text-5xl font-light leading-tight tracking-tight">
-                Timeless Style.<br />
-                <span className="italic font-light text-zinc-700">Modern Elegance.</span>
-              </h1>
-              <p className="text-sm text-zinc-600 mt-4 max-w-md leading-relaxed">
-                Carry your vibe — Découvrez des sacs raffinés, durables et pensés pour le Maroc. Conçu à Casablanca, porté partout.
-              </p>
-              <Link href="/shop" className="inline-block mt-8 bg-black text-white text-xs tracking-[0.2em] px-8 py-3 hover:bg-zinc-800 transition-colors">
-                SHOP COLLECTION
-              </Link>
-            </div>
-            <div className="order-1 md:order-2 relative h-[380px] md:h-[540px] lg:h-[620px] overflow-hidden">
-              <Image
-                src={img("hero", "https://picsum.photos/seed/nayro-hero-luxera/800/1000")}
-                alt="NAYRO Hero"
-                fill
-                priority
-                className="object-cover"
-                unoptimized
-              />
+      {/* HERO — Multi-image carousel, auto-rotates every 3s based on how many banners you add */}
+      {banners.length > 0 ? (
+        <HeroCarousel banners={banners} />
+      ) : (
+        /* Fallback static hero if no banners active */
+        <section className="bg-[#f9f1e8] overflow-hidden">
+          <div className="mx-auto max-w-[1400px] px-4 lg:px-8">
+            <div className="grid md:grid-cols-2 min-h-[540px] lg:min-h-[620px] items-center gap-8 py-8 md:py-0">
+              <div className="order-2 md:order-1 py-8 md:py-16">
+                <p className="text-xs tracking-[0.35em] text-zinc-500 mb-4">NOUVELLE COLLECTION</p>
+                <h1 className="text-4xl lg:text-5xl font-light leading-tight tracking-tight">
+                  Timeless Style.<br />
+                  <span className="italic font-light text-zinc-700">Modern Elegance.</span>
+                </h1>
+                <p className="text-sm text-zinc-600 mt-4 max-w-md leading-relaxed">
+                  Carry your vibe — Découvrez des sacs raffinés, durables et pensés pour le Maroc. Conçu à Casablanca, porté partout.
+                </p>
+                <Link href="/shop" className="inline-block mt-8 bg-black text-white text-xs tracking-[0.2em] px-8 py-3 hover:bg-zinc-800 transition-colors">
+                  SHOP COLLECTION
+                </Link>
+              </div>
+              <div className="order-1 md:order-2 relative h-[380px] md:h-[540px] lg:h-[620px] overflow-hidden">
+                <Image
+                  src={img("hero", "https://picsum.photos/seed/nayro-hero-luxera/800/1000")}
+                  alt="NAYRO Hero"
+                  fill
+                  priority
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="border-t border-black/5 bg-white/50 backdrop-blur">
-          <div className="mx-auto max-w-[1400px] px-4 lg:px-8 py-4 flex flex-wrap justify-center md:justify-between gap-6 text-xs">
-            <span className="flex items-center gap-2 tracking-widest"><span className="w-6 h-6 border border-black/10 flex items-center justify-center">◇</span> QUALITÉ PREMIUM</span>
-            <span className="flex items-center gap-2 tracking-widest"><span className="w-6 h-6 border border-black/10 flex items-center justify-center">✈</span> LIVRAISON PARTOUT AU MAROC</span>
-            <span className="flex items-center gap-2 tracking-widest"><span className="w-6 h-6 border border-black/10 flex items-center justify-center">✧</span> DESIGN EXCLUSIF NAYRO</span>
+          <div className="border-t border-black/5 bg-white/50 backdrop-blur">
+            <div className="mx-auto max-w-[1400px] px-4 lg:px-8 py-4 flex flex-wrap justify-center md:justify-between gap-6 text-xs">
+              <span className="flex items-center gap-2 tracking-widest"><span className="w-6 h-6 border border-black/10 flex items-center justify-center">◇</span> QUALITÉ PREMIUM</span>
+              <span className="flex items-center gap-2 tracking-widest"><span className="w-6 h-6 border border-black/10 flex items-center justify-center">✈</span> LIVRAISON PARTOUT AU MAROC</span>
+              <span className="flex items-center gap-2 tracking-widest"><span className="w-6 h-6 border border-black/10 flex items-center justify-center">✧</span> DESIGN EXCLUSIF NAYRO</span>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 4 CATEGORY CARDS - DYNAMIC */}
       <section className="mx-auto max-w-[1400px] px-4 lg:px-8 py-8">
