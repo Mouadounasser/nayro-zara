@@ -38,9 +38,37 @@ export function Header() {
               <Menu size={20} />
             </button>
 
-            {/* Logo */}
-            <Link href="/" className="text-[28px] font-light tracking-[0.3em] text-black">
-              NAYRO
+            {/* Logo — half white / half black + background half half (ZARA editorial) */}
+            <Link
+              href="/"
+              aria-label="NAYRO home"
+              className="relative inline-flex items-center justify-center px-5 py-2 overflow-hidden border border-black/10 select-none group"
+            >
+              {/* background split 50/50 */}
+              <span
+                aria-hidden
+                className="absolute inset-0"
+                style={{ background: "linear-gradient(90deg, #0a0a0a 0% 50%, #fdfcf8 50% 100%)" }}
+              />
+              {/* subtle diagonal sheen on hover */}
+              <span
+                aria-hidden
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                style={{ background: "linear-gradient(105deg, transparent 0% 48%, rgba(255,255,255,0.06) 50%, transparent 52% 100%)" }}
+              />
+              <span
+                className="relative text-[26px] sm:text-[28px] font-light tracking-[0.32em] leading-none"
+                style={{
+                  background: "linear-gradient(90deg, #ffffff 0% 50%, #0a0a0a 50% 100%)",
+                  WebkitBackgroundClip: "text",
+                  backgroundClip: "text",
+                  color: "transparent",
+                  WebkitTextFillColor: "transparent",
+                  filter: "drop-shadow(0 1px 0 rgba(0,0,0,0.04))",
+                }}
+              >
+                NAYRO
+              </span>
             </Link>
 
             {/* Desktop nav */}
