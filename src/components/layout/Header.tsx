@@ -28,7 +28,7 @@ export function Header() {
       )}>
         {/* Top bar */}
         <div className="hidden md:flex h-7 items-center justify-center bg-black text-white text-[10px] tracking-[0.2em]">
-          LIVRAISON GRATUITE DÈS 600 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON
+          LIVRAISON GRATUITE DÈS 50 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON
         </div>
 
         <div className="mx-auto max-w-[1400px] px-4 lg:px-8">

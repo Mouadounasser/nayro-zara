@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/toast"
 
 export default function SettingsPage() {
-  const [form, setForm] = useState({ store_name: "NAYRO", whatsapp_number: "212600000000", instagram: "https://instagram.com/nayro", delivery_fee: 30, free_delivery_threshold: 600 })
+  const [form, setForm] = useState({ store_name: "NAYRO", whatsapp_number: "212600000000", instagram: "https://instagram.com/nayro", delivery_fee: 30, free_delivery_threshold: 50 })
   const { toast } = useToast()
 
   useEffect(() => {

@@ -31,7 +31,6 @@ export default async function HomePage() {
               <Link href="/shop" className="inline-block mt-8 bg-black text-white text-xs tracking-[0.2em] px-8 py-3 hover:bg-zinc-800 transition-colors">
                 SHOP COLLECTION
               </Link>
-              <p className="text-xs text-zinc-400 mt-3">Gérez ce visuel dans <Link href="/admin/media" className="underline">Médiathèque → Hero (1920x1080)</Link></p>
             </div>
             <div className="order-1 md:order-2 relative h-[380px] md:h-[540px] lg:h-[620px] overflow-hidden">
               <Image
@@ -73,7 +72,6 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
-        <p className="text-xs text-zinc-400 mt-2 text-right">Changez ces 4 images dans <Link href="/admin/media" className="underline">Médiathèque → Catégorie (600x800)</Link></p>
       </section>
 
       {/* FEATURED PRODUCTS */}
@@ -101,7 +99,6 @@ export default async function HomePage() {
             </div>
           ))}
         </div>
-        <p className="text-xs text-zinc-400 mt-2 text-right">Gérez dans <Link href="/admin/media" className="underline">Médiathèque → Lookbook (600x800)</Link></p>
       </section>
 
       {/* SEASONAL SALE - DYNAMIC */}
@@ -123,7 +120,6 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-        <p className="text-xs text-zinc-400 mt-2 text-right">Image Sale: <Link href="/admin/media" className="underline">Médiathèque → Sale (200x200)</Link></p>
       </section>
 
       {/* TESTIMONIALS */}
@@ -160,7 +156,6 @@ export default async function HomePage() {
             </a>
           ))}
         </div>
-        <p className="text-xs text-zinc-400 mt-2 text-right">Gérez dans <Link href="/admin/media" className="underline">Médiathèque → Instagram (400x400)</Link></p>
       </section>
 
       {/* OUR STORY + JOIN - DYNAMIC story image */}
