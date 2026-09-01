@@ -1,15 +1,21 @@
 import Link from "next/link"
 import Image from "next/image"
 import { getProducts } from "@/lib/products"
+import { getSiteImages } from "@/lib/siteImages"
 import { ProductGrid } from "@/components/product/ProductGrid"
 
 export default async function HomePage() {
-  const featured = await getProducts({ limit: 6 })
-  const sacs = await getProducts({ category: "sacs", limit: 4 })
+  const [featured, siteImages] = await Promise.all([
+    getProducts({ limit: 6 }),
+    getSiteImages(),
+  ])
+
+  // Helper to get image url with fallback
+  const img = (key: string, fallback: string) => siteImages[key]?.url || fallback
 
   return (
     <div className="bg-[#fdfcf8]">
-      {/* HERO - LUXÈRA inspired: beige, left text, right image */}
+      {/* HERO - LUXÈRA inspired: beige, left text, right image - DYNAMIC via site_images */}
       <section className="bg-[#f9f1e8] overflow-hidden">
         <div className="mx-auto max-w-[1400px] px-4 lg:px-8">
           <div className="grid md:grid-cols-2 min-h-[540px] lg:min-h-[620px] items-center gap-8 py-8 md:py-0">
@@ -25,11 +31,12 @@ export default async function HomePage() {
               <Link href="/shop" className="inline-block mt-8 bg-black text-white text-xs tracking-[0.2em] px-8 py-3 hover:bg-zinc-800 transition-colors">
                 SHOP COLLECTION
               </Link>
+              <p className="text-xs text-zinc-400 mt-3">Gérez ce visuel dans <Link href="/admin/media" className="underline">Médiathèque → Hero (1920x1080)</Link></p>
             </div>
             <div className="order-1 md:order-2 relative h-[380px] md:h-[540px] lg:h-[620px] overflow-hidden">
               <Image
-                src="https://picsum.photos/seed/nayro-hero-luxera/800/1000"
-                alt="NAYRO - Femme avec sac noir"
+                src={img("hero", "https://picsum.photos/seed/nayro-hero-luxera/800/1000")}
+                alt="NAYRO Hero"
                 fill
                 priority
                 className="object-cover"
@@ -38,7 +45,6 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-        {/* Features below hero */}
         <div className="border-t border-black/5 bg-white/50 backdrop-blur">
           <div className="mx-auto max-w-[1400px] px-4 lg:px-8 py-4 flex flex-wrap justify-center md:justify-between gap-6 text-xs">
             <span className="flex items-center gap-2 tracking-widest"><span className="w-6 h-6 border border-black/10 flex items-center justify-center">◇</span> QUALITÉ PREMIUM</span>
@@ -48,17 +54,17 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 4 CATEGORY CARDS */}
+      {/* 4 CATEGORY CARDS - DYNAMIC */}
       <section className="mx-auto max-w-[1400px] px-4 lg:px-8 py-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { title: "SACS", sub: "EXPLORE →", img: "https://picsum.photos/seed/nayro-cat-sacs/600/800", href: "/shop/sacs" },
-            { title: "ACCESSOIRES", sub: "EXPLORE →", img: "https://picsum.photos/seed/nayro-cat-acc/600/800", href: "/shop/accessories" },
-            { title: "NOUVEAUTÉS", sub: "EXPLORE →", img: "https://picsum.photos/seed/nayro-cat-new/600/800", href: "/shop?filter=new" },
-            { title: "MEILLEURES VENTES", sub: "SHOP NOW →", img: "https://picsum.photos/seed/nayro-cat-best/600/800", href: "/shop?filter=bestseller" },
+            { key: "category_sacs", title: "SACS", sub: "EXPLORE →", href: "/shop/sacs", fallback: "https://picsum.photos/seed/nayro-cat-sacs/600/800" },
+            { key: "category_accessories", title: "ACCESSOIRES", sub: "EXPLORE →", href: "/shop/accessories", fallback: "https://picsum.photos/seed/nayro-cat-acc/600/800" },
+            { key: "category_new", title: "NOUVEAUTÉS", sub: "EXPLORE →", href: "/shop?filter=new", fallback: "https://picsum.photos/seed/nayro-cat-new/600/800" },
+            { key: "category_best", title: "MEILLEURES VENTES", sub: "SHOP NOW →", href: "/shop?filter=bestseller", fallback: "https://picsum.photos/seed/nayro-cat-best/600/800" },
           ].map(c => (
             <Link key={c.title} href={c.href} className="group relative h-[280px] lg:h-[340px] overflow-hidden bg-zinc-100">
-              <Image src={c.img} alt={c.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" unoptimized />
+              <Image src={img(c.key, c.fallback)} alt={c.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" unoptimized />
               <div className="absolute inset-0 bg-black/25 group-hover:bg-black/30 transition-colors" />
               <div className="absolute bottom-4 left-4 text-white">
                 <p className="text-sm tracking-[0.2em]">{c.title}</p>
@@ -67,6 +73,7 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
+        <p className="text-xs text-zinc-400 mt-2 text-right">Changez ces 4 images dans <Link href="/admin/media" className="underline">Médiathèque → Catégorie (600x800)</Link></p>
       </section>
 
       {/* FEATURED PRODUCTS */}
@@ -78,7 +85,7 @@ export default async function HomePage() {
         <ProductGrid products={featured} />
       </section>
 
-      {/* LOOKBOOK */}
+      {/* LOOKBOOK - DYNAMIC */}
       <section className="mx-auto max-w-[1400px] px-4 lg:px-8 py-8">
         <div className="flex gap-8 mb-6">
           <div>
@@ -88,20 +95,16 @@ export default async function HomePage() {
           <Link href="/shop" className="ml-auto hidden md:block text-xs border border-black px-4 py-2 h-fit tracking-widest">EXPLORE LOOKBOOK</Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            "https://picsum.photos/seed/nayro-look1/600/800",
-            "https://picsum.photos/seed/nayro-look2/600/800",
-            "https://picsum.photos/seed/nayro-look3/600/800",
-            "https://picsum.photos/seed/nayro-look4/600/800",
-          ].map((img, i) => (
+          {[1,2,3,4].map(i => (
             <div key={i} className="relative aspect-[3/4] overflow-hidden bg-zinc-100">
-              <Image src={img} alt={`Look ${i}`} fill className="object-cover" unoptimized />
+              <Image src={img(`lookbook_${i}`, `https://picsum.photos/seed/nayro-look${i}/600/800`)} alt={`Look ${i}`} fill className="object-cover" unoptimized />
             </div>
           ))}
         </div>
+        <p className="text-xs text-zinc-400 mt-2 text-right">Gérez dans <Link href="/admin/media" className="underline">Médiathèque → Lookbook (600x800)</Link></p>
       </section>
 
-      {/* SEASONAL SALE */}
+      {/* SEASONAL SALE - DYNAMIC */}
       <section className="mx-auto max-w-[1400px] px-4 lg:px-8 py-8">
         <div className="bg-black text-white grid md:grid-cols-3 items-center overflow-hidden">
           <div className="p-8 md:p-10">
@@ -116,10 +119,11 @@ export default async function HomePage() {
           <div className="p-8 flex flex-col items-center md:items-end gap-4">
             <Link href="/shop?filter=sale" className="border border-white text-xs tracking-[0.2em] px-6 py-3 hover:bg-white hover:text-black transition-colors">SHOP THE SALE</Link>
             <div className="hidden md:block relative w-24 h-24">
-              <Image src="https://picsum.photos/seed/nayro-sale/200/200" alt="Sale" fill className="object-cover" unoptimized />
+              <Image src={img("sale", "https://picsum.photos/seed/nayro-sale/200/200")} alt="Sale" fill className="object-cover" unoptimized />
             </div>
           </div>
         </div>
+        <p className="text-xs text-zinc-400 mt-2 text-right">Image Sale: <Link href="/admin/media" className="underline">Médiathèque → Sale (200x200)</Link></p>
       </section>
 
       {/* TESTIMONIALS */}
@@ -140,7 +144,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* INSTAGRAM */}
+      {/* INSTAGRAM - DYNAMIC */}
       <section className="mx-auto max-w-[1400px] px-4 lg:px-8 py-8">
         <div className="flex justify-between items-end mb-6">
           <div>
@@ -150,22 +154,16 @@ export default async function HomePage() {
           <a href="https://instagram.com/nayro.shop" target="_blank" className="hidden md:block text-xs border border-black px-4 py-2 tracking-widest">VIEW INSTAGRAM</a>
         </div>
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-          {[
-            "https://picsum.photos/seed/nayro-ig1/400/400",
-            "https://picsum.photos/seed/nayro-ig2/400/400",
-            "https://picsum.photos/seed/nayro-ig3/400/400",
-            "https://picsum.photos/seed/nayro-ig4/400/400",
-            "https://picsum.photos/seed/nayro-ig5/400/400",
-            "https://picsum.photos/seed/nayro-ig6/400/400",
-          ].map((img, i) => (
+          {[1,2,3,4,5,6].map(i => (
             <a key={i} href="https://instagram.com/nayro.shop" target="_blank" className="relative aspect-square overflow-hidden bg-zinc-100 group">
-              <Image src={img} alt="Instagram" fill className="object-cover group-hover:scale-105 transition-transform" unoptimized />
+              <Image src={img(`instagram_${i}`, `https://picsum.photos/seed/nayro-ig${i}/400/400`)} alt="Instagram" fill className="object-cover group-hover:scale-105 transition-transform" unoptimized />
             </a>
           ))}
         </div>
+        <p className="text-xs text-zinc-400 mt-2 text-right">Gérez dans <Link href="/admin/media" className="underline">Médiathèque → Instagram (400x400)</Link></p>
       </section>
 
-      {/* OUR STORY + JOIN */}
+      {/* OUR STORY + JOIN - DYNAMIC story image */}
       <section className="mx-auto max-w-[1400px] px-4 lg:px-8 py-8 grid md:grid-cols-2 gap-6">
         <div className="bg-[#f9f1e8] p-8 flex gap-6">
           <div className="flex-1">
@@ -174,7 +172,7 @@ export default async function HomePage() {
             <Link href="/about" className="inline-block mt-4 text-xs tracking-widest border-b border-black pb-1">READ MORE →</Link>
           </div>
           <div className="hidden sm:block relative w-24 h-32 shrink-0">
-            <Image src="https://picsum.photos/seed/nayro-story/200/300" alt="Our story" fill className="object-cover" unoptimized />
+            <Image src={img("story", "https://picsum.photos/seed/nayro-story/200/300")} alt="Our story" fill className="object-cover" unoptimized />
           </div>
         </div>
         <div className="bg-[#f9f1e8] p-8">
@@ -187,7 +185,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Extra spacing for pro feel */}
       <div className="h-8" />
     </div>
   )
