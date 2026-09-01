@@ -23,8 +23,8 @@ export function Header() {
   return (
     <>
       <header className={cn(
-        "sticky top-0 z-40 w-full border-b bg-[#fdfcf8]/95 backdrop-blur supports-[backdrop-filter]:bg-[#fdfcf8]/80 transition-all",
-        scrolled ? "border-zinc-200 shadow-sm" : "border-transparent"
+        "sticky top-0 z-40 w-full border-b bg-[#fdfcf8]/95 backdrop-blur supports-[backdrop-filter]:bg-[#fdfcf8]/80 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-[background-color,border-color]",
+        scrolled ? "border-zinc-200 shadow-[0_2px_20px_rgba(0,0,0,0.06)]" : "border-transparent"
       )}>
         {/* Top bar */}
         <div className="hidden md:flex h-7 items-center justify-center bg-black text-white text-[10px] tracking-[0.2em]">
@@ -38,36 +38,43 @@ export function Header() {
               <Menu size={20} />
             </button>
 
-            {/* Logo — half white / half black + background half half (ZARA editorial) */}
+            {/* Logo — perfect half white / half black + half-half background (ZARA editorial, pixel crisp) */}
             <Link
               href="/"
               aria-label="NAYRO home"
-              className="relative inline-flex items-center justify-center px-5 py-2 overflow-hidden border border-black/10 select-none group"
+              className="relative inline-flex items-center justify-center px-[18px] py-2 overflow-hidden border border-black/10 select-none group isolate will-change-transform"
+              style={{ transform: "translateZ(0)", backfaceVisibility: "hidden" as const }}
             >
-              {/* background split 50/50 */}
+              {/* background split 50/50 — two solid halves for razor sharp line, no gradient banding */}
+              <span aria-hidden className="absolute inset-0 flex">
+                <span className="flex-1 bg-[#0a0a0a]" />
+                <span className="flex-1 bg-[#fdfcf8]" />
+              </span>
+              {/* hairline center seam for premium definition */}
+              <span aria-hidden className="absolute top-0 bottom-0 left-1/2 w-px bg-black/10 -translate-x-px" />
+              {/* hover sheen — smooth */}
               <span
                 aria-hidden
-                className="absolute inset-0"
-                style={{ background: "linear-gradient(90deg, #0a0a0a 0% 50%, #fdfcf8 50% 100%)" }}
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                style={{ background: "linear-gradient(105deg, transparent 0% 46%, rgba(255,255,255,0.08) 50%, transparent 54% 100%)" }}
               />
-              {/* subtle diagonal sheen on hover */}
-              <span
-                aria-hidden
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-                style={{ background: "linear-gradient(105deg, transparent 0% 48%, rgba(255,255,255,0.06) 50%, transparent 52% 100%)" }}
-              />
-              <span
-                className="relative text-[26px] sm:text-[28px] font-light tracking-[0.32em] leading-none"
-                style={{
-                  background: "linear-gradient(90deg, #ffffff 0% 50%, #0a0a0a 50% 100%)",
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
-                  color: "transparent",
-                  WebkitTextFillColor: "transparent",
-                  filter: "drop-shadow(0 1px 0 rgba(0,0,0,0.04))",
-                }}
-              >
-                NAYRO
+              {/* text — two clipped layers for perfect 50% split, no blur */}
+              <span className="relative block leading-none will-change-transform" style={{ transform: "translateZ(0)" }}>
+                <span
+                  aria-hidden
+                  className="absolute inset-0 flex items-center justify-center text-[26px] sm:text-[28px] font-light tracking-[0.32em] will-change-transform transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:-translate-x-[0.5px]"
+                  style={{ clipPath: "inset(0 50% 0 0)", color: "#ffffff" }}
+                >
+                  NAYRO
+                </span>
+                <span
+                  aria-hidden
+                  className="absolute inset-0 flex items-center justify-center text-[26px] sm:text-[28px] font-light tracking-[0.32em] will-change-transform transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:translate-x-[0.5px]"
+                  style={{ clipPath: "inset(0 0 0 50%)", color: "#0a0a0a" }}
+                >
+                  NAYRO
+                </span>
+                <span className="invisible block text-[26px] sm:text-[28px] font-light tracking-[0.32em]">NAYRO</span>
               </span>
             </Link>
 
