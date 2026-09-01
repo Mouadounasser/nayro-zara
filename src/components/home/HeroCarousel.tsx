@@ -115,8 +115,9 @@ export function HeroCarousel({ banners }: { banners: Banner[] }) {
                   style={{ transform: "translateZ(0)" }}
                 />
               </div>
-              {/* Zara scrim - editorial */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/20 to-transparent md:from-black/35 md:via-black/10" />
+              {/* ZARA editorial scrim — stronger left forText visibility on ANY image (bright concert / white) */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 via-[38%] to-transparent md:from-black/70 md:via-black/45 md:via-[42%] md:to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
               <div className="absolute inset-0 bg-black/[0.04]" />
             </div>
           )
@@ -128,72 +129,148 @@ export function HeroCarousel({ banners }: { banners: Banner[] }) {
         <span className="text-[10px] tracking-[0.45em] text-white/35 font-light">NAYRO — PARIS • CASABLANCA — 2026</span>
       </div>
 
-      {/* Content - Zara minimal, left anchored, no white box */}
+      {/* Content - ZARA editorial, left anchored — pro visible + shop-easy */}
       <div className="absolute inset-0">
         <div className="mx-auto max-w-[1720px] w-full h-full px-5 sm:px-8 lg:px-12 xl:px-16 flex items-center">
           {banners.map((b, i) => {
             const active = i === index
+            const stagger = (d: number) => active ? `${d}ms` : "0ms"
             return (
               <div
                 key={`t-${b.id}`}
                 aria-hidden={!active}
-                className="w-full max-w-[560px] will-change-transform"
+                className="w-full max-w-[620px] will-change-transform"
                 style={{
                   opacity: active ? 1 : 0,
-                  transform: active ? "translate3d(0,0,0)" : "translate3d(0,18px,0)",
+                  transform: active ? "translate3d(0,0,0)" : "translate3d(0,22px,0)",
                   transition: active
-                    ? "opacity 800ms cubic-bezier(0.25,1,0.5,1) 120ms, transform 800ms cubic-bezier(0.25,1,0.5,1) 120ms"
-                    : "opacity 500ms ease, transform 500ms ease",
+                    ? "opacity 700ms cubic-bezier(0.25,1,0.5,1), transform 700ms cubic-bezier(0.25,1,0.5,1)"
+                    : "opacity 450ms ease, transform 450ms ease",
                   pointerEvents: active ? "auto" : "none",
                   willChange: "opacity, transform",
                 }}
               >
-                {/* counter - ZARA tiny */}
-                <div className="flex items-center gap-3 mb-5">
-                  <span className="h-px w-6 bg-white/70" />
-                  <p className="text-[10px] tracking-[0.38em] text-white/80 font-light">0{index + 1} — 0{banners.length}</p>
-                  <span className="text-[10px] tracking-[0.2em] text-white/50 hidden sm:inline">NOUVELLE COLLECTION</span>
+                {/* soft plate behind text for ANY image — Zara readability without white card */}
+                <div className="absolute -inset-6 -inset-y-8 bg-gradient-to-r from-black/35 via-black/15 to-transparent blur-[0px] -z-10 rounded-[2px] hidden md:block" aria-hidden />
+                
+                {/* counter - ZARA tiny, smooth */}
+                <div
+                  className="flex items-center gap-3 mb-4 will-change-transform"
+                  style={{
+                    opacity: active ? 1 : 0,
+                    transform: active ? "translateY(0)" : "translateY(8px)",
+                    transition: `opacity 600ms ease ${stagger(80)}, transform 600ms cubic-bezier(0.25,1,0.5,1) ${stagger(80)}`,
+                  }}
+                >
+                  <span className="h-px w-7 bg-white" style={{ boxShadow: "0 1px 8px rgba(0,0,0,0.4)" }} />
+                  <p className="text-[11px] tracking-[0.38em] text-white font-light" style={{ textShadow: "0 1px 12px rgba(0,0,0,0.6)" }}>0{index + 1} — 0{banners.length}</p>
+                  <span className="text-[10px] tracking-[0.22em] text-white/80 hidden sm:inline" style={{ textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}>NOUVELLE COLLECTION</span>
                 </div>
 
-                <h1 className="font-extralight leading-[0.88] tracking-[-0.04em] text-white">
-                  <span className="block text-[42px] sm:text-[56px] lg:text-[72px] xl:text-[78px]">{b.title}</span>
+                <h1 className="font-extralight leading-[0.88] tracking-[-0.04em]">
+                  <span
+                    className="block text-white text-[40px] sm:text-[54px] lg:text-[70px] xl:text-[76px] will-change-transform"
+                    style={{
+                      opacity: active ? 1 : 0,
+                      transform: active ? "translateY(0)" : "translateY(14px)",
+                      transition: `opacity 700ms ease ${stagger(140)}, transform 700ms cubic-bezier(0.25,1,0.5,1) ${stagger(140)}`,
+                      textShadow: "0 2px 18px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.4)",
+                    }}
+                  >
+                    {b.title}
+                  </span>
                   {(b.subtitle || "").trim() && (
-                    <span className="block text-[15px] sm:text-[16px] lg:text-[18px] tracking-[0.22em] font-light text-white/90 mt-3 leading-relaxed">
+                    <span
+                      className="block text-white tracking-[0.20em] font-light leading-relaxed mt-3 will-change-transform text-[13px] sm:text-[14px] lg:text-[15px] xl:text-[16px]"
+                      style={{
+                        opacity: active ? 0.95 : 0,
+                        transform: active ? "translateY(0)" : "translateY(10px)",
+                        transition: `opacity 700ms ease ${stagger(220)}, transform 700ms cubic-bezier(0.25,1,0.5,1) ${stagger(220)}`,
+                        textShadow: "0 1px 14px rgba(0,0,0,0.55)",
+                      }}
+                    >
                       {(b.subtitle || "").split("—")[0].trim() || b.subtitle}
                     </span>
                   )}
                 </h1>
 
                 {/* divider */}
-                <div className="h-px w-12 bg-white/60 mt-6" />
+                <div
+                  className="h-px w-12 bg-white/90 mt-5 will-change-transform"
+                  style={{
+                    opacity: active ? 1 : 0,
+                    transform: active ? "scaleX(1)" : "scaleX(0.6)",
+                    transformOrigin: "left",
+                    transition: `opacity 600ms ease ${stagger(300)}, transform 600ms cubic-bezier(0.25,1,0.5,1) ${stagger(300)}`,
+                    boxShadow: "0 1px 8px rgba(0,0,0,0.3)",
+                  }}
+                />
 
                 {b.subtitle && b.subtitle.includes("—") && b.subtitle.split("—")[1] && (
-                  <p className="text-[13px] sm:text-[14px] leading-[1.7] text-white/75 mt-4 max-w-[44ch] font-light">
+                  <p
+                    className="text-[14px] sm:text-[15px] leading-[1.7] text-white mt-4 max-w-[46ch] font-light will-change-transform"
+                    style={{
+                      opacity: active ? 0.88 : 0,
+                      transform: active ? "translateY(0)" : "translateY(8px)",
+                      transition: `opacity 700ms ease ${stagger(360)}, transform 700ms cubic-bezier(0.25,1,0.5,1) ${stagger(360)}`,
+                      textShadow: "0 1px 12px rgba(0,0,0,0.6)",
+                    }}
+                  >
                     {b.subtitle.split("—").slice(1).join("—").trim()}
                   </p>
                 )}
                 {!b.subtitle?.includes("—") && b.subtitle && (
-                  <p className="text-[13px] sm:text-[14px] leading-[1.7] text-white/75 mt-4 max-w-[44ch] font-light">
-                    Carry your vibe — Minimal. Moderne. Conçu au Maroc.
+                  <p
+                    className="text-[14px] sm:text-[15px] leading-[1.7] text-white mt-4 max-w-[46ch] font-light will-change-transform"
+                    style={{
+                      opacity: active ? 0.88 : 0,
+                      transform: active ? "translateY(0)" : "translateY(8px)",
+                      transition: `opacity 700ms ease ${stagger(360)}, transform 700ms cubic-bezier(0.25,1,0.5,1) ${stagger(360)}`,
+                      textShadow: "0 1px 12px rgba(0,0,0,0.6)",
+                    }}
+                  >
+                    Minimal. Moderne. Conçu au Maroc — Livraison partout.
                   </p>
                 )}
 
-                <div className="mt-8 flex flex-wrap items-center gap-4">
+                {/* SHOP — big, high-contrast, easy to tap */}
+                <div
+                  className="mt-7 flex flex-wrap items-center gap-3 sm:gap-4 will-change-transform"
+                  style={{
+                    opacity: active ? 1 : 0,
+                    transform: active ? "translateY(0)" : "translateY(10px)",
+                    transition: `opacity 700ms ease ${stagger(460)}, transform 700ms cubic-bezier(0.25,1,0.5,1) ${stagger(460)}`,
+                  }}
+                >
                   <Link
                     href={b.link || "/shop"}
-                    className="group inline-flex items-center gap-3 bg-white text-black text-[11px] tracking-[0.22em] px-8 py-[14px] hover:bg-white/90 transition-colors duration-200 will-change-transform"
-                    style={{ transform: "translateZ(0)" }}
+                    aria-label={`Shop ${b.title}`}
+                    className="group relative inline-flex items-center justify-center gap-3 bg-white text-black text-[12px] sm:text-[12.5px] tracking-[0.22em] font-medium px-8 sm:px-9 py-[15px] sm:py-[16px] min-h-[48px] min-w-[200px] sm:min-w-[220px] will-change-transform select-none"
+                    style={{
+                      transform: "translateZ(0)",
+                      boxShadow: "0 10px 28px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.22)",
+                    }}
                   >
                     <span>SHOP COLLECTION</span>
-                    <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                    <span aria-hidden className="text-[14px] leading-none transition-transform duration-300 group-hover:translate-x-1.5 group-active:translate-x-1">→</span>
+                    <span className="absolute inset-0 ring-1 ring-black/5 pointer-events-none" />
                   </Link>
                   <Link
                     href={b.link || "/shop"}
-                    className="hidden sm:inline-flex text-[11px] tracking-[0.18em] text-white/85 underline underline-offset-8 decoration-white/30 hover:decoration-white hover:text-white transition-all"
+                    className="inline-flex sm:hidden items-center justify-center text-[11px] tracking-[0.18em] text-white bg-white/10 backdrop-blur border border-white/20 px-5 py-[13px] min-h-[48px] hover:bg-white hover:text-black transition-colors"
                   >
-                    DISCOVER
+                    VOIR
+                  </Link>
+                  <Link
+                    href={b.link || "/shop"}
+                    className="hidden sm:inline-flex items-center gap-2 text-[12px] tracking-[0.16em] text-white hover:text-white transition-colors group/discover px-2 py-2"
+                    style={{ textShadow: "0 1px 8px rgba(0,0,0,0.55)" }}
+                  >
+                    <span className="underline underline-offset-[9px] decoration-white/40 group-hover/discover:decoration-white decoration-[1.2px]">DISCOVER</span>
+                    <span className="opacity-70 group-hover/discover:opacity-100 transition-opacity">↗</span>
                   </Link>
                 </div>
+                <p className="mt-3 text-[10px] tracking-[0.14em] text-white/60 hidden sm:block" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>Livraison 50 MAD • Retour 14 jours • Paiement à la livraison</p>
               </div>
             )
           })}
