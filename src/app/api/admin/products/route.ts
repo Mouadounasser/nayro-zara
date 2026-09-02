@@ -58,14 +58,15 @@ export async function POST(req: NextRequest) {
     })
   }
 
-  // Images: use provided URLs or placeholder
-  if (body.image_urls && Array.isArray(body.image_urls) && body.image_urls.length > 0) {
-    const images = body.image_urls.map((url: string, idx: number) => ({
-      product_id: product.id,
-      url,
-      alt: product.name,
-      position: idx,
-    }))
+  // Images: support both legacy string[] and new {url,color,color_hex}[] 
+  const rawImages: any[] = body.images || body.image_urls || []
+  if (rawImages.length > 0) {
+    const images = rawImages.map((it: any, idx: number) => {
+      const url = typeof it === "string" ? it : it.url
+      const color = typeof it === "string" ? null : (it.color || null)
+      const color_hex = typeof it === "string" ? null : (it.color_hex || null)
+      return { product_id: product.id, url, alt: product.name, position: idx, color, color_hex }
+    })
     await supabase.from("product_images").insert(images)
   } else {
     await supabase.from("product_images").insert({

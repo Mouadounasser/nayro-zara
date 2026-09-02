@@ -33,8 +33,8 @@ export const mockProducts: Product[] = [
     created_at: "2026-08-31T00:00:00Z",
     updated_at: "2026-08-31T00:00:00Z",
     images: [
-      { id: "1-1", product_id: "1", url: img("aola1"), alt: "Sac AOLA KIDS bleu", position: 0 },
-      { id: "1-2", product_id: "1", url: img("aola2"), alt: "Sac AOLA KIDS détail", position: 1 },
+      { id: "1-1", product_id: "1", url: img("aola1"), alt: "Sac AOLA KIDS bleu", position: 0, color: null, color_hex: null },
+      { id: "1-2", product_id: "1", url: img("aola2"), alt: "Sac AOLA KIDS détail", position: 1, color: null, color_hex: null },
     ],
     variants: [
       { id: "1-one", product_id: "1", size: "One Size", color_hex: "#0a0a0a", color: "Bleu/Jaune", sku: "NAY-SAC-AOLA-BLEU-OS", stock: 25, price_override: null, is_active: true, image_url: null },
@@ -63,8 +63,8 @@ export const mockProducts: Product[] = [
     created_at: "2026-08-31T00:00:00Z",
     updated_at: "2026-08-31T00:00:00Z",
     images: [
-      { id: "2-1", product_id: "2", url: img("gladly1"), alt: "Sac Gladly noir", position: 0 },
-      { id: "2-2", product_id: "2", url: img("gladly2"), alt: "Sac Gladly porté", position: 1 },
+      { id: "2-1", product_id: "2", url: img("gladly1"), alt: "Sac Gladly noir", position: 0, color: null, color_hex: null },
+      { id: "2-2", product_id: "2", url: img("gladly2"), alt: "Sac Gladly porté", position: 1, color: null, color_hex: null },
     ],
     variants: [
       { id: "2-one", product_id: "2", size: "One Size", color_hex: "#0a0a0a", color: "Noir", sku: "NAY-SAC-GLADLY-NOIR-OS", stock: 18, price_override: null, is_active: true, image_url: null },
@@ -93,8 +93,8 @@ export const mockProducts: Product[] = [
     created_at: "2026-08-31T00:00:00Z",
     updated_at: "2026-08-31T00:00:00Z",
     images: [
-      { id: "3-1", product_id: "3", url: img("tote1"), alt: "Tote bags trio", position: 0 },
-      { id: "3-2", product_id: "3", url: img("tote2"), alt: "Tote détail", position: 1 },
+      { id: "3-1", product_id: "3", url: img("tote1"), alt: "Tote bags trio", position: 0, color: null, color_hex: null },
+      { id: "3-2", product_id: "3", url: img("tote2"), alt: "Tote détail", position: 1, color: null, color_hex: null },
     ],
     variants: [
       { id: "3-beige", product_id: "3", size: "One Size", color_hex: "#0a0a0a", color: "Beige", sku: "NAY-TOTE-BEIGE", stock: 30, price_override: null, is_active: true, image_url: null },
@@ -125,8 +125,8 @@ export const mockProducts: Product[] = [
     created_at: "2026-08-31T00:00:00Z",
     updated_at: "2026-08-31T00:00:00Z",
     images: [
-      { id: "4-1", product_id: "4", url: img("bandouliere1"), alt: "Sac bandoulière marron", position: 0 },
-      { id: "4-2", product_id: "4", url: img("bandouliere2"), alt: "Sac bandoulière porté", position: 1 },
+      { id: "4-1", product_id: "4", url: img("bandouliere1"), alt: "Sac bandoulière marron", position: 0, color: null, color_hex: null },
+      { id: "4-2", product_id: "4", url: img("bandouliere2"), alt: "Sac bandoulière porté", position: 1, color: null, color_hex: null },
     ],
     variants: [
       { id: "4-one", product_id: "4", size: "One Size", color_hex: "#0a0a0a", color: "Marron", sku: "NAY-BANDOULIERE-MARRON-OS", stock: 12, price_override: null, is_active: true, image_url: null },
@@ -155,8 +155,8 @@ export const mockProducts: Product[] = [
     created_at: "2026-08-31T00:00:00Z",
     updated_at: "2026-08-31T00:00:00Z",
     images: [
-      { id: "5-1", product_id: "5", url: img("cabas1"), alt: "Sac cabas noir", position: 0 },
-      { id: "5-2", product_id: "5", url: img("cabas2"), alt: "Sac cabas porté", position: 1 },
+      { id: "5-1", product_id: "5", url: img("cabas1"), alt: "Sac cabas noir", position: 0, color: null, color_hex: null },
+      { id: "5-2", product_id: "5", url: img("cabas2"), alt: "Sac cabas porté", position: 1, color: null, color_hex: null },
     ],
     variants: [
       { id: "5-one", product_id: "5", size: "One Size", color_hex: "#0a0a0a", color: "Noir", sku: "NAY-CABAS-NOIR-OS", stock: 20, price_override: null, is_active: true, image_url: null },
@@ -185,8 +185,8 @@ export const mockProducts: Product[] = [
     created_at: "2026-08-31T00:00:00Z",
     updated_at: "2026-08-31T00:00:00Z",
     images: [
-      { id: "6-1", product_id: "6", url: img("rose1"), alt: "Sac rose pastel", position: 0 },
-      { id: "6-2", product_id: "6", url: img("rose2"), alt: "Sac rose collection", position: 1 },
+      { id: "6-1", product_id: "6", url: img("rose1"), alt: "Sac rose pastel", position: 0, color: null, color_hex: null },
+      { id: "6-2", product_id: "6", url: img("rose2"), alt: "Sac rose collection", position: 1, color: null, color_hex: null },
     ],
     variants: [
       { id: "6-one", product_id: "6", size: "One Size", color_hex: "#0a0a0a", color: "Rose", sku: "NAY-SAC-ROSE-OS", stock: 15, price_override: null, is_active: true, image_url: null },
@@ -215,8 +215,8 @@ export const mockProducts: Product[] = [
     created_at: "2026-08-31T00:00:00Z",
     updated_at: "2026-08-31T00:00:00Z",
     images: [
-      { id: "7-1", product_id: "7", url: img("scolaire1"), alt: "Sac scolaire noir", position: 0 },
-      { id: "7-2", product_id: "7", url: img("scolaire2"), alt: "Sac scolaire dos", position: 1 },
+      { id: "7-1", product_id: "7", url: img("scolaire1"), alt: "Sac scolaire noir", position: 0, color: null, color_hex: null },
+      { id: "7-2", product_id: "7", url: img("scolaire2"), alt: "Sac scolaire dos", position: 1, color: null, color_hex: null },
     ],
     variants: [
       { id: "7-one", product_id: "7", size: "One Size", color_hex: "#0a0a0a", color: "Noir", sku: "NAY-SAC-SCOLAIRE-NOIR-OS", stock: 22, price_override: null, is_active: true, image_url: null },
@@ -245,8 +245,8 @@ export const mockProducts: Product[] = [
     created_at: "2026-08-31T00:00:00Z",
     updated_at: "2026-08-31T00:00:00Z",
     images: [
-      { id: "8-1", product_id: "8", url: img("pochette1"), alt: "Pochette NAYRO", position: 0 },
-      { id: "8-2", product_id: "8", url: img("pochette2"), alt: "Pochette intérieur", position: 1 },
+      { id: "8-1", product_id: "8", url: img("pochette1"), alt: "Pochette NAYRO", position: 0, color: null, color_hex: null },
+      { id: "8-2", product_id: "8", url: img("pochette2"), alt: "Pochette intérieur", position: 1, color: null, color_hex: null },
     ],
     variants: [
       { id: "8-one", product_id: "8", size: "One Size", color_hex: "#0a0a0a", color: "Noir", sku: "NAY-POCHETTE-NOIR-OS", stock: 30, price_override: null, is_active: true, image_url: null },
@@ -275,8 +275,8 @@ export const mockProducts: Product[] = [
     created_at: "2026-08-31T00:00:00Z",
     updated_at: "2026-08-31T00:00:00Z",
     images: [
-      { id: "9-1", product_id: "9", url: img("plage1"), alt: "Sac plage", position: 0 },
-      { id: "9-2", product_id: "9", url: img("plage2"), alt: "Sac plage détail", position: 1 },
+      { id: "9-1", product_id: "9", url: img("plage1"), alt: "Sac plage", position: 0, color: null, color_hex: null },
+      { id: "9-2", product_id: "9", url: img("plage2"), alt: "Sac plage détail", position: 1, color: null, color_hex: null },
     ],
     variants: [
       { id: "9-one", product_id: "9", size: "One Size", color_hex: "#0a0a0a", color: "Beige", sku: "NAY-PLAGE-BEIGE-OS", stock: 18, price_override: null, is_active: true, image_url: null },
@@ -305,8 +305,8 @@ export const mockProducts: Product[] = [
     created_at: "2026-08-31T00:00:00Z",
     updated_at: "2026-08-31T00:00:00Z",
     images: [
-      { id: "10-1", product_id: "10", url: img("montre1"), alt: "Montre verte", position: 0 },
-      { id: "10-2", product_id: "10", url: img("montre2"), alt: "Montre détail", position: 1 },
+      { id: "10-1", product_id: "10", url: img("montre1"), alt: "Montre verte", position: 0, color: null, color_hex: null },
+      { id: "10-2", product_id: "10", url: img("montre2"), alt: "Montre détail", position: 1, color: null, color_hex: null },
     ],
     variants: [
       { id: "10-one", product_id: "10", size: "One Size", color_hex: "#0a0a0a", color: "Vert", sku: "NAY-MONTRE-VERTE-OS", stock: 10, price_override: null, is_active: true, image_url: null },
@@ -335,8 +335,8 @@ export const mockProducts: Product[] = [
     created_at: "2026-08-31T00:00:00Z",
     updated_at: "2026-08-31T00:00:00Z",
     images: [
-      { id: "11-1", product_id: "11", url: img("fourre1"), alt: "Sac fourre-tout", position: 0 },
-      { id: "11-2", product_id: "11", url: img("fourre2"), alt: "Sac fourre-tout détail", position: 1 },
+      { id: "11-1", product_id: "11", url: img("fourre1"), alt: "Sac fourre-tout", position: 0, color: null, color_hex: null },
+      { id: "11-2", product_id: "11", url: img("fourre2"), alt: "Sac fourre-tout détail", position: 1, color: null, color_hex: null },
     ],
     variants: [
       { id: "11-one", product_id: "11", size: "One Size", color_hex: "#0a0a0a", color: "Blanc/Bleu", sku: "NAY-FOURRE-TOUT-OS", stock: 16, price_override: null, is_active: true, image_url: null },
@@ -365,8 +365,8 @@ export const mockProducts: Product[] = [
     created_at: "2026-08-31T00:00:00Z",
     updated_at: "2026-08-31T00:00:00Z",
     images: [
-      { id: "12-1", product_id: "12", url: img("ensemble1"), alt: "Ensemble NAYRO", position: 0 },
-      { id: "12-2", product_id: "12", url: img("ensemble2"), alt: "Ensemble détail", position: 1 },
+      { id: "12-1", product_id: "12", url: img("ensemble1"), alt: "Ensemble NAYRO", position: 0, color: null, color_hex: null },
+      { id: "12-2", product_id: "12", url: img("ensemble2"), alt: "Ensemble détail", position: 1, color: null, color_hex: null },
     ],
     variants: [
       { id: "12-one", product_id: "12", size: "One Size", color_hex: "#0a0a0a", color: "Vert/Bleu", sku: "NAY-ENSEMBLE-OS", stock: 8, price_override: null, is_active: true, image_url: null },

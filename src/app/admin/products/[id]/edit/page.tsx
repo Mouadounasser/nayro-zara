@@ -80,6 +80,15 @@ export default function EditProductPage() {
     finally { setSaving(false)}
   }
 
+  const updateImageColor = async (idx:number, color:string|null) => {
+    const hex = color ? (COLORS.find(c=>c.name===color)?.hex || null) : null
+    const copy=[...images]; copy[idx] = { ...copy[idx], color, color_hex: hex }; setImages(copy)
+    // persist if image has id
+    const img = copy[idx]
+    if(img.id) {
+      await fetch(`/api/admin/product-images/${img.id}`, { method: "PUT", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ color, color_hex: hex }) }).catch(()=>{})
+    }
+  }
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if(!file) return
@@ -87,11 +96,12 @@ export default function EditProductPage() {
     const fd = new FormData()
     fd.append("file", file)
     fd.append("productId", id)
+    // if admin has selected a color for next upload, tag it
     const res = await fetch("/api/admin/upload", { method: "POST", body: fd })
     const data = await res.json()
     if(res.ok) {
-      setImages([...images, { url: data.url, alt: file.name, position: images.length }])
-      toast("Image uploadée", "success")
+      setImages([...images, { url: data.url, alt: file.name, position: images.length, color: null, color_hex: null }])
+      toast("Image uploadée — taguez sa couleur ci-dessous", "success")
     } else toast(data.error || "Erreur upload", "error")
     setUploading(false)
     e.target.value=""
@@ -99,9 +109,10 @@ export default function EditProductPage() {
 
   const addVariant = () => setVariants([...variants, { size: "M", color: form.primary_color_name || "Noir", color_hex: form.primary_color || "#0a0a0a", image_url: null, stock: 5, is_active: true }])
   const handleVariantImage = async (idx:number, file:File) => {
-    const fd=new FormData(); fd.append("file", file); fd.append("productId", id)
+    const v = variants[idx]
+    const fd=new FormData(); fd.append("file", file); fd.append("productId", id); if(v.color) fd.append("color", v.color); if(v.color_hex) fd.append("color_hex", v.color_hex)
     const res=await fetch("/api/admin/upload",{method:"POST",body:fd}); const data=await res.json()
-    if(res.ok){ const copy=[...variants]; (copy[idx] as any).image_url=data.url; setVariants(copy); setImages(prev=>[...prev,{url:data.url,alt:file.name,position:prev.length}]); toast("Image variante uploadée","success") } else toast(data.error||"Erreur","error")
+    if(res.ok){ const copy=[...variants]; (copy[idx] as any).image_url=data.url; setVariants(copy); setImages(prev=>[...prev,{url:data.url,alt:file.name,position:prev.length, color: v.color || null, color_hex: v.color_hex || null}]); toast("Image variante uploadée","success") } else toast(data.error||"Erreur","error")
   }
   const removeVariant = (idx: number) => setVariants(variants.filter((_,i)=>i!==idx))
   const updateVariant = (idx: number, field: string, value: any) => {
@@ -284,21 +295,37 @@ export default function EditProductPage() {
           </div>
         </div>
 
-        {/* Images */}
+        {/* Images — multi par couleur */}
         <div>
-          <h3 className="text-xs tracking-[0.2em] mb-2">IMAGES</h3>
-          <div className="grid grid-cols-3 gap-2 mb-3">
+          <h3 className="text-xs tracking-[0.2em] mb-2">IMAGES — multi par couleur (ex: Brown = 3 images)</h3>
+          <div className="grid grid-cols-3 gap-3 mb-3">
             {images.map((img, i)=> (
-              <div key={i} className="relative aspect-[3/4] bg-zinc-100 overflow-hidden border">
-                <img src={img.url} alt={img.alt || ""} className="w-full h-full object-cover" />
-                <span className="absolute top-1 left-1 bg-black text-white text-[10px] px-1">{i===0 ? "PRINCIPALE" : i+1}</span>
+              <div key={img.id || i} className="group relative bg-zinc-100 border overflow-hidden">
+                <div className="aspect-[3/4] relative">
+                  <img src={img.url} alt={img.alt || ""} className="w-full h-full object-cover" />
+                  <span className="absolute top-1 left-1 bg-black text-white text-[10px] px-1">{i===0 ? "PRINCIPALE" : i+1}</span>
+                  {img.color && <span className="absolute bottom-1 right-1 text-[10px] px-1.5 py-0.5 bg-white border flex items-center gap-1"><span className="w-2 h-2 rounded-full border" style={{background: img.color_hex || "#0a0a0a"}} />{img.color}</span>}
+                  <button onClick={async()=>{
+                    if(!confirm("Supprimer cette image ?")) return;
+                    if(img.id) await fetch(`/api/admin/product-images/${img.id}`,{method:"DELETE"}).catch(()=>{});
+                    setImages(images.filter((_,idx)=>idx!==i))
+                  }} className="absolute top-1 right-1 bg-black text-white text-xs px-1.5 py-0.5 opacity-0 group-hover:opacity-100">✕</button>
+                </div>
+                <div className="p-2 bg-white">
+                  <select value={img.color || ""} onChange={e=> updateImageColor(i, e.target.value || null)} className="w-full text-xs border border-zinc-200 px-1 py-1 bg-white">
+                    <option value="">— Toutes couleurs</option>
+                    {COLORS.map(c=> <option key={c.name} value={c.name}>{c.name}</option>)}
+                    {variants.map(v=> v.color && !COLORS.find(c=>c.name===v.color) ? <option key={v.color} value={v.color}>{v.color}</option> : null)}
+                  </select>
+                </div>
               </div>
             ))}
           </div>
           <label className="block border border-dashed border-zinc-300 p-4 text-center cursor-pointer hover:bg-zinc-50">
             <input type="file" accept="image/*" onChange={handleUpload} className="hidden" disabled={uploading} />
-            <span className="text-xs tracking-widest">{uploading ? "UPLOAD..." : "CLIQUER POUR UPLOADER IMAGE"}</span>
+            <span className="text-xs tracking-widest">{uploading ? "UPLOAD..." : "+ AJOUTER IMAGE (taguez couleur ensuite)"}</span>
           </label>
+          <p className="text-[11px] text-zinc-500 mt-2">Tag `Brown` sur 3 images → galerie Brown affiche les 3 (switch fluide). Sans tag = visible pour toutes.</p>
         </div>
 
         <div className="flex gap-3 pt-4">

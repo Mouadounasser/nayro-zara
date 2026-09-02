@@ -8,6 +8,8 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData()
   const file = formData.get("file") as File | null
   const productId = formData.get("productId") as string | null
+  const color = formData.get("color") as string | null
+  const color_hex = formData.get("color_hex") as string | null
 
   if (!file) return NextResponse.json({ error: "No file" }, { status: 400 })
 
@@ -32,6 +34,8 @@ export async function POST(req: NextRequest) {
       url: publicUrl,
       alt: file.name,
       position: count || 0,
+      color: color || null,
+      color_hex: color_hex || null,
     })
   }
 

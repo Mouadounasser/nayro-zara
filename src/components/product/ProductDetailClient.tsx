@@ -49,14 +49,28 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
     return v[0] || product.variants.find(x => x.color === selectedColor) || product.variants.find(x => x.size === selectedSize) || product.variants[0]
   }, [product.variants, selectedColor, selectedSize])
 
-  // When variant changes, switch image to variant's image if exists
+  // Images filtered by selected color — multi per color (e.g., Brown = 3 images)
+  const displayImages = useMemo(() => {
+    if (!selectedColor) return product.images
+    const byColor = product.images.filter((img: any) => img.color === selectedColor)
+    if (byColor.length > 0) return byColor
+    const v = product.variants.find(v => v.color === selectedColor) as any
+    if (v?.image_url) return [{ id: v.id + "-img", product_id: product.id, url: v.image_url, alt: v.color, position: 0, color: v.color, color_hex: v.color_hex } as any]
+    const fallback = product.images.filter((img: any) => !img.color)
+    return fallback.length ? fallback : product.images
+  }, [product.images, product.variants, selectedColor])
+
+  // When color changes, reset gallery index for smooth switch
+  useEffect(() => { setActiveImage(0) }, [selectedColor])
+
+  // When variant changes with image_url that is in displayImages, keep sync
   useEffect(() => {
     if (selectedVariant && (selectedVariant as any).image_url) {
       const url = (selectedVariant as any).image_url
-      const idx = product.images.findIndex(i => i.url === url)
+      const idx = displayImages.findIndex((i: any) => i.url === url)
       if (idx !== -1) setActiveImage(idx)
     }
-  }, [selectedVariant, product.images])
+  }, [selectedVariant, displayImages])
 
   const isWishlisted = has(product.id)
 
@@ -87,11 +101,9 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
   )
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`
 
-  // Main display image: variant image overrides gallery if exists and not in gallery
-  const variantImageUrl = (selectedVariant as any)?.image_url
-  const variantImageInGallery = variantImageUrl ? product.images.findIndex(i => i.url === variantImageUrl) !== -1 : false
-  const mainImageUrl = variantImageUrl && !variantImageInGallery ? variantImageUrl : product.images[activeImage]?.url
-  const mainImageAlt = variantImageUrl && !variantImageInGallery ? `${product.name} — ${selectedVariant?.color}` : product.images[activeImage]?.alt
+  // Main display image from filtered gallery
+  const mainImageUrl = displayImages[activeImage]?.url || product.images[activeImage]?.url
+  const mainImageAlt = (displayImages[activeImage] as any)?.alt || product.images[activeImage]?.alt
 
   return (
     <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
@@ -106,19 +118,13 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
           )}
         </div>
         <div className="flex gap-2 overflow-x-auto pb-1">
-          {/* Variant image as first thumb if not in gallery */}
-          {variantImageUrl && !variantImageInGallery && (
-            <button onClick={() => {}} className="relative w-20 h-24 bg-zinc-100 shrink-0 overflow-hidden border border-black">
-              <Image src={variantImageUrl} alt={selectedVariant?.color || ""} fill className="object-cover" unoptimized />
-            </button>
-          )}
-          {product.images.map((img, idx) => (
-            <button key={img.id} onClick={() => setActiveImage(idx)} className={cn("relative w-20 h-24 bg-zinc-100 shrink-0 overflow-hidden border", activeImage === idx && !variantImageUrl || (variantImageInGallery && variantImageUrl && product.images[idx].url === variantImageUrl) ? "border-black" : "border-transparent")}>
+          {displayImages.map((img: any, idx) => (
+            <button key={img.id || img.url} onClick={() => setActiveImage(idx)} className={cn("relative w-20 h-24 bg-zinc-100 shrink-0 overflow-hidden border", activeImage === idx ? "border-black" : "border-transparent")}>
               <Image src={img.url} alt={img.alt || ""} fill className="object-cover" unoptimized />
             </button>
           ))}
         </div>
-        {product.images.length > 1 && <p className="text-[11px] text-zinc-500">Sélectionnez une couleur pour voir son image — ex: Bleu → sac bleu, Noir → sac noir.</p>}
+        {product.images.length > 1 && <p className="text-[11px] text-zinc-500">Sélectionnez une couleur — galerie switch fluide (ex: Brown = 3 images, Blue = 2 images).</p>}
       </div>
 
       {/* Info */}

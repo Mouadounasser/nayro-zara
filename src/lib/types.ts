@@ -30,6 +30,8 @@ export type ProductImage = {
   url: string
   alt: string | null
   position: number
+  color: string | null
+  color_hex: string | null
 }
 
 export type ProductVariant = {
