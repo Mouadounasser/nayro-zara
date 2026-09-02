@@ -25,6 +25,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     compare_at_price: body.compare_at_price || null,
     sku: body.sku,
     category_slug: body.category_slug,
+    audience: body.audience || "unisex",
+    primary_color: body.primary_color || null,
+    primary_color_name: body.primary_color_name || null,
     is_active: body.is_active,
     is_featured: body.is_featured,
     is_new: body.is_new,
@@ -43,9 +46,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         product_id: id,
         size: v.size,
         color: v.color,
+        color_hex: v.color_hex || null,
         sku: v.sku || `${body.sku}-${v.size}`,
         stock: Number(v.stock) || 0,
         price_override: v.price_override || null,
+        is_active: v.is_active ?? true,
       }))
       await supabase.from("product_variants").insert(variants)
     }
@@ -78,10 +83,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       slug: newSlug,
       name: `${orig.name} (Copy)`,
       description: orig.description,
+      short_description: orig.short_description,
       price: orig.price,
       compare_at_price: orig.compare_at_price,
       sku: newSku,
       category_slug: orig.category_slug,
+      audience: orig.audience || "unisex",
+      primary_color: orig.primary_color,
+      primary_color_name: orig.primary_color_name,
       is_active: false,
       is_featured: orig.is_featured,
       is_new: orig.is_new,
@@ -94,8 +103,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         product_id: dup.id,
         size: v.size,
         color: v.color,
+        color_hex: v.color_hex,
         sku: `${newSku}-${v.size}`,
         stock: v.stock,
+        is_active: v.is_active ?? true,
       }))
       await supabase.from("product_variants").insert(variants)
     }

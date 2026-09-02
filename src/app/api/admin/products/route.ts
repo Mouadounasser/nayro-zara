@@ -16,6 +16,9 @@ export async function POST(req: NextRequest) {
     compare_at_price: body.compare_at_price || null,
     sku: body.sku,
     category_slug: body.category_slug,
+    audience: body.audience || "unisex",
+    primary_color: body.primary_color || null,
+    primary_color_name: body.primary_color_name || null,
     is_active: body.is_active ?? true,
     is_featured: body.is_featured ?? false,
     is_new: body.is_new ?? false,
@@ -30,8 +33,10 @@ export async function POST(req: NextRequest) {
       product_id: product.id,
       size: v.size,
       color: v.color,
+      color_hex: v.color_hex || null,
       sku: v.sku || `${body.sku}-${v.size}`,
       stock: Number(v.stock) || 0,
+      is_active: v.is_active ?? true,
     }))
     const { error: varErr } = await supabase.from("product_variants").insert(variants)
     if (varErr) console.error("Variant insert error", varErr)
@@ -40,9 +45,11 @@ export async function POST(req: NextRequest) {
     await supabase.from("product_variants").insert({
       product_id: product.id,
       size: "M",
-      color: "Black",
+      color: body.primary_color_name || "Noir",
+      color_hex: body.primary_color || "#0a0a0a",
       sku: `${body.sku}-M`,
       stock: 10,
+      is_active: true,
     })
   }
 

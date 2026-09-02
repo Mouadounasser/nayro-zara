@@ -22,7 +22,10 @@ export const mockProducts: Product[] = [
     brand: "NAYRO",
     category_id: "1",
     category_slug: "sacs",
+    audience: "unisex",
     collection_id: null,
+    primary_color: "#0a0a0a",
+    primary_color_name: "Noir",
     is_active: true,
     is_featured: true,
     is_new: true,
@@ -34,7 +37,7 @@ export const mockProducts: Product[] = [
       { id: "1-2", product_id: "1", url: img("aola2"), alt: "Sac AOLA KIDS détail", position: 1 },
     ],
     variants: [
-      { id: "1-one", product_id: "1", size: "One Size", color: "Bleu/Jaune", sku: "NAY-SAC-AOLA-BLEU-OS", stock: 25, price_override: null },
+      { id: "1-one", product_id: "1", size: "One Size", color_hex: "#0a0a0a", color: "Bleu/Jaune", sku: "NAY-SAC-AOLA-BLEU-OS", stock: 25, price_override: null, is_active: true },
     ],
   },
   {
@@ -49,7 +52,10 @@ export const mockProducts: Product[] = [
     brand: "NAYRO",
     category_id: "1",
     category_slug: "sacs",
+    audience: "unisex",
     collection_id: null,
+    primary_color: "#0a0a0a",
+    primary_color_name: "Noir",
     is_active: true,
     is_featured: true,
     is_new: true,
@@ -61,7 +67,7 @@ export const mockProducts: Product[] = [
       { id: "2-2", product_id: "2", url: img("gladly2"), alt: "Sac Gladly porté", position: 1 },
     ],
     variants: [
-      { id: "2-one", product_id: "2", size: "One Size", color: "Noir", sku: "NAY-SAC-GLADLY-NOIR-OS", stock: 18, price_override: null },
+      { id: "2-one", product_id: "2", size: "One Size", color_hex: "#0a0a0a", color: "Noir", sku: "NAY-SAC-GLADLY-NOIR-OS", stock: 18, price_override: null, is_active: true },
     ],
   },
   {
@@ -76,7 +82,10 @@ export const mockProducts: Product[] = [
     brand: "NAYRO",
     category_id: "1",
     category_slug: "sacs",
+    audience: "unisex",
     collection_id: null,
+    primary_color: "#0a0a0a",
+    primary_color_name: "Noir",
     is_active: true,
     is_featured: true,
     is_new: false,
@@ -88,9 +97,9 @@ export const mockProducts: Product[] = [
       { id: "3-2", product_id: "3", url: img("tote2"), alt: "Tote détail", position: 1 },
     ],
     variants: [
-      { id: "3-beige", product_id: "3", size: "One Size", color: "Beige", sku: "NAY-TOTE-BEIGE", stock: 30, price_override: null },
-      { id: "3-orange", product_id: "3", size: "One Size", color: "Orange", sku: "NAY-TOTE-ORANGE", stock: 20, price_override: null },
-      { id: "3-bleu", product_id: "3", size: "One Size", color: "Bleu", sku: "NAY-TOTE-BLEU", stock: 22, price_override: null },
+      { id: "3-beige", product_id: "3", size: "One Size", color_hex: "#0a0a0a", color: "Beige", sku: "NAY-TOTE-BEIGE", stock: 30, price_override: null, is_active: true },
+      { id: "3-orange", product_id: "3", size: "One Size", color_hex: "#0a0a0a", color: "Orange", sku: "NAY-TOTE-ORANGE", stock: 20, price_override: null, is_active: true },
+      { id: "3-bleu", product_id: "3", size: "One Size", color_hex: "#0a0a0a", color: "Bleu", sku: "NAY-TOTE-BLEU", stock: 22, price_override: null, is_active: true },
     ],
   },
   {
@@ -105,7 +114,10 @@ export const mockProducts: Product[] = [
     brand: "NAYRO",
     category_id: "1",
     category_slug: "sacs",
+    audience: "unisex",
     collection_id: null,
+    primary_color: "#0a0a0a",
+    primary_color_name: "Noir",
     is_active: true,
     is_featured: true,
     is_new: false,
@@ -117,7 +129,7 @@ export const mockProducts: Product[] = [
       { id: "4-2", product_id: "4", url: img("bandouliere2"), alt: "Sac bandoulière porté", position: 1 },
     ],
     variants: [
-      { id: "4-one", product_id: "4", size: "One Size", color: "Marron", sku: "NAY-BANDOULIERE-MARRON-OS", stock: 12, price_override: null },
+      { id: "4-one", product_id: "4", size: "One Size", color_hex: "#0a0a0a", color: "Marron", sku: "NAY-BANDOULIERE-MARRON-OS", stock: 12, price_override: null, is_active: true },
     ],
   },
   {
@@ -132,7 +144,10 @@ export const mockProducts: Product[] = [
     brand: "NAYRO",
     category_id: "1",
     category_slug: "sacs",
+    audience: "unisex",
     collection_id: null,
+    primary_color: "#0a0a0a",
+    primary_color_name: "Noir",
     is_active: true,
     is_featured: false,
     is_new: true,
@@ -144,7 +159,7 @@ export const mockProducts: Product[] = [
       { id: "5-2", product_id: "5", url: img("cabas2"), alt: "Sac cabas porté", position: 1 },
     ],
     variants: [
-      { id: "5-one", product_id: "5", size: "One Size", color: "Noir", sku: "NAY-CABAS-NOIR-OS", stock: 20, price_override: null },
+      { id: "5-one", product_id: "5", size: "One Size", color_hex: "#0a0a0a", color: "Noir", sku: "NAY-CABAS-NOIR-OS", stock: 20, price_override: null, is_active: true },
     ],
   },
   {
@@ -159,7 +174,10 @@ export const mockProducts: Product[] = [
     brand: "NAYRO",
     category_id: "1",
     category_slug: "sacs",
+    audience: "unisex",
     collection_id: null,
+    primary_color: "#0a0a0a",
+    primary_color_name: "Noir",
     is_active: true,
     is_featured: false,
     is_new: true,
@@ -171,7 +189,7 @@ export const mockProducts: Product[] = [
       { id: "6-2", product_id: "6", url: img("rose2"), alt: "Sac rose collection", position: 1 },
     ],
     variants: [
-      { id: "6-one", product_id: "6", size: "One Size", color: "Rose", sku: "NAY-SAC-ROSE-OS", stock: 15, price_override: null },
+      { id: "6-one", product_id: "6", size: "One Size", color_hex: "#0a0a0a", color: "Rose", sku: "NAY-SAC-ROSE-OS", stock: 15, price_override: null, is_active: true },
     ],
   },
   {
@@ -186,7 +204,10 @@ export const mockProducts: Product[] = [
     brand: "NAYRO",
     category_id: "1",
     category_slug: "sacs",
+    audience: "unisex",
     collection_id: null,
+    primary_color: "#0a0a0a",
+    primary_color_name: "Noir",
     is_active: true,
     is_featured: false,
     is_new: false,
@@ -198,7 +219,7 @@ export const mockProducts: Product[] = [
       { id: "7-2", product_id: "7", url: img("scolaire2"), alt: "Sac scolaire dos", position: 1 },
     ],
     variants: [
-      { id: "7-one", product_id: "7", size: "One Size", color: "Noir", sku: "NAY-SAC-SCOLAIRE-NOIR-OS", stock: 22, price_override: null },
+      { id: "7-one", product_id: "7", size: "One Size", color_hex: "#0a0a0a", color: "Noir", sku: "NAY-SAC-SCOLAIRE-NOIR-OS", stock: 22, price_override: null, is_active: true },
     ],
   },
   {
@@ -213,7 +234,10 @@ export const mockProducts: Product[] = [
     brand: "NAYRO",
     category_id: "2",
     category_slug: "accessories",
+    audience: "unisex",
     collection_id: null,
+    primary_color: "#0a0a0a",
+    primary_color_name: "Noir",
     is_active: true,
     is_featured: false,
     is_new: false,
@@ -225,7 +249,7 @@ export const mockProducts: Product[] = [
       { id: "8-2", product_id: "8", url: img("pochette2"), alt: "Pochette intérieur", position: 1 },
     ],
     variants: [
-      { id: "8-one", product_id: "8", size: "One Size", color: "Noir", sku: "NAY-POCHETTE-NOIR-OS", stock: 30, price_override: null },
+      { id: "8-one", product_id: "8", size: "One Size", color_hex: "#0a0a0a", color: "Noir", sku: "NAY-POCHETTE-NOIR-OS", stock: 30, price_override: null, is_active: true },
     ],
   },
   {
@@ -240,7 +264,10 @@ export const mockProducts: Product[] = [
     brand: "NAYRO",
     category_id: "1",
     category_slug: "sacs",
+    audience: "unisex",
     collection_id: null,
+    primary_color: "#0a0a0a",
+    primary_color_name: "Noir",
     is_active: true,
     is_featured: true,
     is_new: true,
@@ -252,7 +279,7 @@ export const mockProducts: Product[] = [
       { id: "9-2", product_id: "9", url: img("plage2"), alt: "Sac plage détail", position: 1 },
     ],
     variants: [
-      { id: "9-one", product_id: "9", size: "One Size", color: "Beige", sku: "NAY-PLAGE-BEIGE-OS", stock: 18, price_override: null },
+      { id: "9-one", product_id: "9", size: "One Size", color_hex: "#0a0a0a", color: "Beige", sku: "NAY-PLAGE-BEIGE-OS", stock: 18, price_override: null, is_active: true },
     ],
   },
   {
@@ -267,7 +294,10 @@ export const mockProducts: Product[] = [
     brand: "NAYRO",
     category_id: "2",
     category_slug: "accessories",
+    audience: "unisex",
     collection_id: null,
+    primary_color: "#0a0a0a",
+    primary_color_name: "Noir",
     is_active: true,
     is_featured: true,
     is_new: false,
@@ -279,7 +309,7 @@ export const mockProducts: Product[] = [
       { id: "10-2", product_id: "10", url: img("montre2"), alt: "Montre détail", position: 1 },
     ],
     variants: [
-      { id: "10-one", product_id: "10", size: "One Size", color: "Vert", sku: "NAY-MONTRE-VERTE-OS", stock: 10, price_override: null },
+      { id: "10-one", product_id: "10", size: "One Size", color_hex: "#0a0a0a", color: "Vert", sku: "NAY-MONTRE-VERTE-OS", stock: 10, price_override: null, is_active: true },
     ],
   },
   {
@@ -294,7 +324,10 @@ export const mockProducts: Product[] = [
     brand: "NAYRO",
     category_id: "1",
     category_slug: "sacs",
+    audience: "unisex",
     collection_id: null,
+    primary_color: "#0a0a0a",
+    primary_color_name: "Noir",
     is_active: true,
     is_featured: false,
     is_new: false,
@@ -306,7 +339,7 @@ export const mockProducts: Product[] = [
       { id: "11-2", product_id: "11", url: img("fourre2"), alt: "Sac fourre-tout détail", position: 1 },
     ],
     variants: [
-      { id: "11-one", product_id: "11", size: "One Size", color: "Blanc/Bleu", sku: "NAY-FOURRE-TOUT-OS", stock: 16, price_override: null },
+      { id: "11-one", product_id: "11", size: "One Size", color_hex: "#0a0a0a", color: "Blanc/Bleu", sku: "NAY-FOURRE-TOUT-OS", stock: 16, price_override: null, is_active: true },
     ],
   },
   {
@@ -321,7 +354,10 @@ export const mockProducts: Product[] = [
     brand: "NAYRO",
     category_id: "1",
     category_slug: "sacs",
+    audience: "unisex",
     collection_id: null,
+    primary_color: "#0a0a0a",
+    primary_color_name: "Noir",
     is_active: true,
     is_featured: false,
     is_new: true,
@@ -333,7 +369,7 @@ export const mockProducts: Product[] = [
       { id: "12-2", product_id: "12", url: img("ensemble2"), alt: "Ensemble détail", position: 1 },
     ],
     variants: [
-      { id: "12-one", product_id: "12", size: "One Size", color: "Vert/Bleu", sku: "NAY-ENSEMBLE-OS", stock: 8, price_override: null },
+      { id: "12-one", product_id: "12", size: "One Size", color_hex: "#0a0a0a", color: "Vert/Bleu", sku: "NAY-ENSEMBLE-OS", stock: 8, price_override: null, is_active: true },
     ],
   },
 ]

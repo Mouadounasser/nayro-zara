@@ -11,6 +11,9 @@ export type Product = {
   category_id: string | null
   category_slug: string
   collection_id: string | null
+  audience: "women" | "men" | "unisex" | "kids"
+  primary_color: string | null
+  primary_color_name: string | null
   is_active: boolean
   is_featured: boolean
   is_new: boolean
@@ -34,9 +37,11 @@ export type ProductVariant = {
   product_id: string
   size: string | null
   color: string | null
+  color_hex: string | null
   sku: string | null
   stock: number
   price_override: number | null
+  is_active: boolean
 }
 
 export type Category = {

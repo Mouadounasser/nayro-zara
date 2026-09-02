@@ -5,7 +5,33 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/toast"
 
-type Variant = { id?: string; size: string; color: string; stock: number; sku?: string }
+type Variant = { id?: string; size: string; color: string; color_hex?: string; stock: number; sku?: string; is_active?: boolean }
+
+const COLORS = [
+  { name: "Noir", hex: "#0a0a0a" },
+  { name: "Blanc", hex: "#ffffff" },
+  { name: "Beige", hex: "#f5e6c8" },
+  { name: "Camel", hex: "#c19a6b" },
+  { name: "Marron", hex: "#5c4033" },
+  { name: "Bleu", hex: "#1e3a8a" },
+  { name: "Bleu Clair", hex: "#60a5fa" },
+  { name: "Rouge", hex: "#dc2626" },
+  { name: "Bordeaux", hex: "#7f1d1d" },
+  { name: "Vert", hex: "#166534" },
+  { name: "Olive", hex: "#84cc16" },
+  { name: "Rose", hex: "#f472b6" },
+  { name: "Violet", hex: "#7c3aed" },
+  { name: "Orange", hex: "#ea580c" },
+  { name: "Gris", hex: "#6b7280" },
+  { name: "Jaune", hex: "#facc15" },
+] as const
+
+const AUDIENCES = [
+  { value: "women", label: "Femme", sub: "Women" },
+  { value: "men", label: "Homme", sub: "Men" },
+  { value: "unisex", label: "Unisex", sub: "Unisex" },
+  { value: "kids", label: "Enfant", sub: "Kids" },
+] as const
 
 export default function EditProductPage() {
   const params = useParams()
@@ -18,12 +44,16 @@ export default function EditProductPage() {
   const [variants, setVariants] = useState<Variant[]>([])
   const [images, setImages] = useState<any[]>([])
   const [uploading, setUploading] = useState(false)
+  const [categories, setCategories] = useState<{slug:string,name:string}[]>([])
 
   useEffect(() => {
+    fetch("/api/admin/categories").then(r=>r.json()).then(d=>{
+      if(d.categories?.length) setCategories(d.categories.map((c:any)=>({slug:c.slug,name:c.name})))
+    }).catch(()=>{})
     fetch(`/api/admin/products/${id}`).then(r=>r.json()).then(data => {
-      if(data.error) { toast(data.error, "error"); return }
+      if(data.error) { toast(data.error, "error"); setLoading(false); return }
       setForm(data)
-      setVariants(data.product_variants || data.variants || [])
+      setVariants((data.product_variants || data.variants || []).map((v:any)=>({...v, is_active: v.is_active ?? true, color_hex: v.color_hex || "#0a0a0a"})))
       setImages(data.product_images || data.images || [])
       setLoading(false)
     }).catch(()=> setLoading(false))
@@ -40,9 +70,8 @@ export default function EditProductPage() {
       if(!res.ok) throw new Error((await res.json()).error)
       toast("Produit mis à jour", "success")
       router.push("/admin/products")
-    } catch(e:any) {
-      toast(e.message, "error")
-    } finally { setSaving(false)}
+    } catch(e:any) { toast(e.message, "error") }
+    finally { setSaving(false)}
   }
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,17 +86,20 @@ export default function EditProductPage() {
     if(res.ok) {
       setImages([...images, { url: data.url, alt: file.name, position: images.length }])
       toast("Image uploadée", "success")
-    } else {
-      toast(data.error || "Erreur upload", "error")
-    }
+    } else toast(data.error || "Erreur upload", "error")
     setUploading(false)
+    e.target.value=""
   }
 
-  const addVariant = () => setVariants([...variants, { size: "M", color: "Black", stock: 5 }])
+  const addVariant = () => setVariants([...variants, { size: "M", color: form.primary_color_name || "Noir", color_hex: form.primary_color || "#0a0a0a", stock: 5, is_active: true }])
   const removeVariant = (idx: number) => setVariants(variants.filter((_,i)=>i!==idx))
   const updateVariant = (idx: number, field: string, value: any) => {
     const copy = [...variants]
     ;(copy[idx] as any)[field] = value
+    if(field==="color") {
+      const f = COLORS.find(c=>c.name===value)
+      if(f) copy[idx].color_hex = f.hex
+    }
     setVariants(copy)
   }
 
@@ -75,8 +107,15 @@ export default function EditProductPage() {
   if(!form) return <div className="p-8">Produit introuvable</div>
 
   return (
-    <div className="max-w-3xl">
-      <h1 className="text-xl tracking-[0.2em] mb-6">EDITER: {form.name}</h1>
+    <div className="max-w-4xl">
+      <div className="flex justify-between items-start mb-6">
+        <h1 className="text-xl tracking-[0.2em]">EDITER: {form.name}</h1>
+        <label className={`flex items-center gap-3 px-4 py-2 border cursor-pointer ${form.is_active ? "bg-black text-white border-black" : "bg-white border-zinc-300"}`}>
+          <input type="checkbox" checked={!!form.is_active} onChange={e=> setForm({...form, is_active: e.target.checked})} />
+          <span className="text-xs tracking-widest">{form.is_active ? "ACTIF" : "DÉSACTIVÉ"}</span>
+        </label>
+      </div>
+
       <div className="bg-white border border-zinc-200 p-6 space-y-6">
         <div className="grid md:grid-cols-2 gap-4">
           <div>
@@ -85,7 +124,7 @@ export default function EditProductPage() {
           </div>
           <div>
             <label className="text-xs tracking-widest">SLUG</label>
-            <Input value={form.slug} onChange={e=> setForm({...form, slug: e.target.value})} className="mt-1 rounded-none font-mono" />
+            <Input value={form.slug} onChange={e=> setForm({...form, slug: e.target.value})} className="mt-1 rounded-none font-mono text-xs" />
           </div>
         </div>
 
@@ -105,47 +144,108 @@ export default function EditProductPage() {
           </div>
           <div>
             <label className="text-xs tracking-widest">PRIX COMPARÉ</label>
-            <Input type="number" value={form.compare_at_price || ""} onChange={e=> setForm({...form, compare_at_price: e.target.value ? Number(e.target.value) : null})} className="mt-1 rounded-none" placeholder="Sale price" />
+            <Input type="number" value={form.compare_at_price || ""} onChange={e=> setForm({...form, compare_at_price: e.target.value ? Number(e.target.value) : null})} className="mt-1 rounded-none" />
           </div>
           <div>
             <label className="text-xs tracking-widest">SKU</label>
-            <Input value={form.sku} onChange={e=> setForm({...form, sku: e.target.value})} className="mt-1 rounded-none font-mono" />
+            <Input value={form.sku} onChange={e=> setForm({...form, sku: e.target.value})} className="mt-1 rounded-none font-mono text-xs" />
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <label className="text-xs tracking-widest">CATÉGORIE — par type</label>
+            <select value={form.category_slug} onChange={e=> setForm({...form, category_slug: e.target.value})} className="mt-1 w-full h-11 border border-zinc-200 px-4 bg-white text-sm">
+              {categories.map(c=> <option key={c.slug} value={c.slug}>{c.name.toUpperCase()}</option>)}
+              <option value="sacs">SACS</option>
+              <option value="accessories">ACCESSOIRES</option>
+              <option value="women">Women</option>
+              <option value="men">Men</option>
+              <option value="shoes">Shoes</option>
+              <option value="new">NOUVEAUTÉS</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-xs tracking-widest">POUR QUI? — audience</label>
+            <div className="mt-1 grid grid-cols-4 gap-2">
+              {AUDIENCES.map(a=> (
+                <button key={a.value} type="button" onClick={()=> setForm({...form, audience: a.value})} className={`h-11 border text-xs tracking-widest flex flex-col items-center justify-center ${form.audience===a.value ? "bg-black text-white border-black" : "bg-white border-zinc-200 hover:border-black"}`}>
+                  <span>{a.label}</span>
+                  <span className="text-[10px] opacity-60">{a.sub}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         <div>
-          <label className="text-xs tracking-widest">CATÉGORIE</label>
-          <select value={form.category_slug} onChange={e=> setForm({...form, category_slug: e.target.value})} className="mt-1 w-full h-11 border border-zinc-200 px-4">
-            <option value="women">Women</option>
-            <option value="men">Men</option>
-            <option value="shoes">Shoes</option>
-            <option value="accessories">Accessories</option>
-          </select>
+          <label className="text-xs tracking-widest">COULEUR PRINCIPALE</label>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {COLORS.map(c=> (
+              <button key={c.hex} type="button" onClick={()=> setForm({...form, primary_color: c.hex, primary_color_name: c.name})} className={`w-9 h-9 rounded-full border-2 ${form.primary_color===c.hex ? "border-black scale-110" : "border-white shadow"}`} style={{background:c.hex}} title={c.name} />
+            ))}
+            <label className="w-9 h-9 rounded-full border border-dashed flex items-center justify-center cursor-pointer">
+              <input type="color" value={form.primary_color || "#0a0a0a"} onChange={e=> setForm({...form, primary_color: e.target.value})} className="sr-only" />
+              <span className="text-xs">+</span>
+            </label>
+          </div>
+          <div className="mt-3 flex items-center gap-3">
+            <span className="w-6 h-6 rounded-full border" style={{background: form.primary_color || "#0a0a0a"}} />
+            <Input value={form.primary_color_name || ""} onChange={e=> setForm({...form, primary_color_name: e.target.value})} className="rounded-none h-9 max-w-[160px]" placeholder="Noir" />
+            <Input value={form.primary_color || ""} onChange={e=> setForm({...form, primary_color: e.target.value})} className="rounded-none h-9 max-w-[120px] font-mono text-xs" />
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <label className="flex items-center gap-2 text-xs tracking-widest"><input type="checkbox" checked={!!form.is_active} onChange={e=> setForm({...form, is_active: e.target.checked})} /> ACTIF</label>
-          <label className="flex items-center gap-2 text-xs tracking-widest"><input type="checkbox" checked={!!form.is_featured} onChange={e=> setForm({...form, is_featured: e.target.checked})} /> FEATURED</label>
-          <label className="flex items-center gap-2 text-xs tracking-widest"><input type="checkbox" checked={!!form.is_new} onChange={e=> setForm({...form, is_new: e.target.checked})} /> NEW</label>
-          <label className="flex items-center gap-2 text-xs tracking-widest"><input type="checkbox" checked={!!form.is_bestseller} onChange={e=> setForm({...form, is_bestseller: e.target.checked})} /> BESTSELLER</label>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t">
+          {[
+            {k:"is_active", label:"ACTIF", desc:"Visible"},
+            {k:"is_featured", label:"FEATURED", desc:"Home"},
+            {k:"is_new", label:"NEW", desc:"Badge new"},
+            {k:"is_bestseller", label:"BEST", desc:"Badge best"},
+          ].map(t=> (
+            <label key={t.k} className={`flex items-center justify-between px-3 py-3 border cursor-pointer ${form[t.k] ? "bg-black text-white border-black" : "bg-white border-zinc-200"}`}>
+              <div><div className="text-xs tracking-widest">{t.label}</div><div className="text-[10px] opacity-60">{t.desc}</div></div>
+              <input type="checkbox" checked={!!form[t.k]} onChange={e=> setForm({...form, [t.k]: e.target.checked})} className="w-4 h-4" />
+            </label>
+          ))}
         </div>
 
         {/* Variants */}
         <div>
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-3">
             <h3 className="text-xs tracking-[0.2em]">VARIANTES / STOCK</h3>
-            <button onClick={addVariant} className="text-xs border border-black px-3 py-1">AJOUTER TAILLE</button>
+            <button onClick={addVariant} className="text-xs bg-black text-white px-4 py-2">+ AJOUTER TAILLE</button>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {variants.map((v, idx)=> (
-              <div key={idx} className="grid grid-cols-4 gap-2 items-center border border-zinc-100 p-2">
-                <Input placeholder="Taille" value={v.size} onChange={e=> updateVariant(idx, "size", e.target.value)} className="rounded-none h-9" />
-                <Input placeholder="Couleur" value={v.color} onChange={e=> updateVariant(idx, "color", e.target.value)} className="rounded-none h-9" />
-                <Input type="number" placeholder="Stock" value={v.stock} onChange={e=> updateVariant(idx, "stock", Number(e.target.value))} className="rounded-none h-9" />
-                <button onClick={()=> removeVariant(idx)} className="text-xs text-red-600 border border-red-200 py-2">RETIRER</button>
+              <div key={idx} className={`grid grid-cols-12 gap-2 items-center border p-3 ${v.is_active===false ? "bg-zinc-50 opacity-60" : "bg-white"}`}>
+                <div className="col-span-3">
+                  <label className="text-[10px] tracking-widest">TAILLE</label>
+                  <Input value={v.size || ""} onChange={e=> updateVariant(idx, "size", e.target.value)} className="rounded-none h-9 mt-1" />
+                </div>
+                <div className="col-span-4">
+                  <label className="text-[10px] tracking-widest">COULEUR</label>
+                  <div className="flex gap-2 mt-1">
+                    <span className="w-9 h-9 rounded-full border shrink-0" style={{background: v.color_hex || "#0a0a0a"}} />
+                    <Input value={v.color || ""} onChange={e=> updateVariant(idx, "color", e.target.value)} className="rounded-none h-9 flex-1" />
+                  </div>
+                  <div className="flex gap-1 mt-2 flex-wrap">
+                    {COLORS.slice(0,8).map(c=> <button key={c.hex} type="button" onClick={()=> updateVariant(idx, "color_hex", c.hex)} className={`w-6 h-6 rounded-full border ${v.color_hex===c.hex ? "border-black" : "border-white shadow"}`} style={{background:c.hex}} />)}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <label className="text-[10px] tracking-widest">STOCK</label>
+                  <Input type="number" value={v.stock} onChange={e=> updateVariant(idx, "stock", Number(e.target.value))} className="rounded-none h-9 mt-1" />
+                </div>
+                <div className="col-span-3 flex flex-col gap-2">
+                  <label className={`flex items-center gap-2 text-xs px-2 py-1 border cursor-pointer ${v.is_active!==false ? "bg-green-50 border-green-200 text-green-700" : "bg-zinc-100"}`}>
+                    <input type="checkbox" checked={v.is_active!==false} onChange={e=> updateVariant(idx, "is_active", e.target.checked)} />
+                    {v.is_active!==false ? "ACTIVE" : "DÉSACTIVÉ"}
+                  </label>
+                  <button onClick={()=> removeVariant(idx)} className="text-xs text-red-600 border border-red-200 py-1.5">RETIRER</button>
+                </div>
               </div>
             ))}
-            {variants.length===0 && <p className="text-xs text-zinc-500 border border-dashed p-4 text-center">Aucune variante — ajoutez des tailles</p>}
           </div>
         </div>
 
@@ -162,9 +262,8 @@ export default function EditProductPage() {
           </div>
           <label className="block border border-dashed border-zinc-300 p-4 text-center cursor-pointer hover:bg-zinc-50">
             <input type="file" accept="image/*" onChange={handleUpload} className="hidden" disabled={uploading} />
-            <span className="text-xs tracking-widest">{uploading ? "UPLOAD..." : "CLIQUER POUR UPLOADER IMAGE (Supabase Storage → products)"}</span>
+            <span className="text-xs tracking-widest">{uploading ? "UPLOAD..." : "CLIQUER POUR UPLOADER IMAGE"}</span>
           </label>
-          <p className="text-xs text-zinc-500 mt-1">Max 5MB, JPG/PNG. L’upload crée l’image dans Supabase Storage et l’associe au produit.</p>
         </div>
 
         <div className="flex gap-3 pt-4">
