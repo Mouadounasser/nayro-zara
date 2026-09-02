@@ -38,6 +38,7 @@ export type ProductVariant = {
   size: string | null
   color: string | null
   color_hex: string | null
+  image_url: string | null
   sku: string | null
   stock: number
   price_override: number | null

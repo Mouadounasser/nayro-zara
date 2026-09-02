@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/toast"
 
-type Variant = { size: string; color: string; color_hex: string; stock: number; is_active: boolean }
+type Variant = { size: string; color: string; color_hex: string; image_url: string | null; stock: number; is_active: boolean }
 
 const COLORS = [
   { name: "Noir", hex: "#0a0a0a" },
@@ -59,7 +59,7 @@ export default function NewProductPage() {
     is_bestseller: false,
   })
   const [variants, setVariants] = useState<Variant[]>([
-    { size: "One Size", color: "Noir", color_hex: "#0a0a0a", stock: 10, is_active: true },
+    { size: "One Size", color: "Noir", color_hex: "#0a0a0a", image_url: null, stock: 10, is_active: true },
   ])
 
   useEffect(() => {
@@ -106,7 +106,15 @@ export default function NewProductPage() {
     finally { setLoading(false) }
   }
 
-  const addVariant = () => setVariants([...variants, { size: "M", color: form.primary_color_name, color_hex: form.primary_color, stock: 5, is_active: true }])
+  const addVariant = () => setVariants([...variants, { size: "M", color: form.primary_color_name, color_hex: form.primary_color, image_url: null, stock: 5, is_active: true }])
+  const handleVariantImage = async (idx:number, file: File) => {
+    if(file.size > 5*1024*1024) { toast("Image trop grande (max 5MB)", "error"); return }
+    const fd = new FormData(); fd.append("file", file)
+    const res = await fetch("/api/admin/upload", {method:"POST", body: fd})
+    const data = await res.json()
+    if(res.ok){ updateVariant(idx, "image_url", data.url); if(!imageUrls.includes(data.url)) setImageUrls(prev=>[...prev, data.url]); toast("Image variante uploadée", "success") }
+    else toast(data.error || "Erreur", "error")
+  }
   const updateVariant = (idx: number, field: keyof Variant, value: any) => {
     const copy = [...variants]; (copy[idx] as any)[field] = value
     // if color name changed, sync hex if picking from palette
@@ -273,33 +281,58 @@ export default function NewProductPage() {
           </div>
           <div className="space-y-3">
             {variants.map((v, idx)=> (
-              <div key={idx} className={`grid grid-cols-12 gap-2 items-center border p-3 ${v.is_active ? "border-zinc-200 bg-white" : "border-zinc-200 bg-zinc-50 opacity-60"}`}>
-                <div className="col-span-3">
-                  <label className="text-[10px] tracking-widest">TAILLE</label>
-                  <Input placeholder="M / 42" value={v.size} onChange={e=> updateVariant(idx, "size", e.target.value)} className="rounded-none h-9 mt-1" />
-                </div>
-                <div className="col-span-4">
-                  <label className="text-[10px] tracking-widest">COULEUR</label>
-                  <div className="flex gap-2 mt-1">
-                    <span className="w-9 h-9 rounded-full border border-zinc-200 shrink-0" style={{background: v.color_hex}} />
-                    <Input placeholder="Noir" value={v.color} onChange={e=> updateVariant(idx, "color", e.target.value)} className="rounded-none h-9 flex-1" />
+              <div key={idx} className={`border p-3 space-y-3 ${v.is_active ? "border-zinc-200 bg-white" : "border-zinc-200 bg-zinc-50 opacity-60"}`}>
+                <div className="grid grid-cols-12 gap-2 items-start">
+                  <div className="col-span-3">
+                    <label className="text-[10px] tracking-widest">TAILLE</label>
+                    <Input placeholder="M / 42" value={v.size} onChange={e=> updateVariant(idx, "size", e.target.value)} className="rounded-none h-9 mt-1" />
                   </div>
-                  <div className="flex gap-1 mt-2 flex-wrap">
-                    {COLORS.slice(0,8).map(c=> (
-                      <button key={c.hex} type="button" onClick={()=> updateVariant(idx, "color_hex", c.hex)} className={`w-6 h-6 rounded-full border ${v.color_hex===c.hex ? "border-black" : "border-white shadow"}`} style={{background:c.hex}} title={c.name} />
-                    ))}
+                  <div className="col-span-4">
+                    <label className="text-[10px] tracking-widest">COULEUR</label>
+                    <div className="flex gap-2 mt-1">
+                      <span className="w-9 h-9 rounded-full border border-zinc-200 shrink-0" style={{background: v.color_hex}} />
+                      <Input placeholder="Noir" value={v.color} onChange={e=> updateVariant(idx, "color", e.target.value)} className="rounded-none h-9 flex-1" />
+                    </div>
+                    <div className="flex gap-1 mt-2 flex-wrap">
+                      {COLORS.slice(0,8).map(c=> (
+                        <button key={c.hex} type="button" onClick={()=> updateVariant(idx, "color_hex", c.hex)} className={`w-6 h-6 rounded-full border ${v.color_hex===c.hex ? "border-black" : "border-white shadow"}`} style={{background:c.hex}} title={c.name} />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="col-span-2">
+                    <label className="text-[10px] tracking-widest">STOCK</label>
+                    <Input type="number" placeholder="0" value={v.stock} onChange={e=> updateVariant(idx, "stock", Number(e.target.value))} className="rounded-none h-9 mt-1" />
+                  </div>
+                  <div className="col-span-3 flex flex-col gap-2">
+                    <label className={`flex items-center gap-2 text-xs px-2 py-1 border cursor-pointer ${v.is_active ? "bg-green-50 border-green-200 text-green-700" : "bg-zinc-100 border-zinc-200 text-zinc-500"}`}>
+                      <input type="checkbox" checked={v.is_active} onChange={e=> updateVariant(idx, "is_active", e.target.checked)} />
+                      {v.is_active ? "ACTIVE" : "DÉSACTIVÉ"}
+                    </label>
+                    <button type="button" onClick={()=> setVariants(variants.filter((_,i)=>i!==idx))} className="text-xs text-red-600 border border-red-200 py-1.5 hover:bg-red-50">RETIRER</button>
                   </div>
                 </div>
-                <div className="col-span-2">
-                  <label className="text-[10px] tracking-widest">STOCK</label>
-                  <Input type="number" placeholder="0" value={v.stock} onChange={e=> updateVariant(idx, "stock", Number(e.target.value))} className="rounded-none h-9 mt-1" />
-                </div>
-                <div className="col-span-3 flex flex-col gap-2">
-                  <label className={`flex items-center gap-2 text-xs px-2 py-1 border cursor-pointer ${v.is_active ? "bg-green-50 border-green-200 text-green-700" : "bg-zinc-100 border-zinc-200 text-zinc-500"}`}>
-                    <input type="checkbox" checked={v.is_active} onChange={e=> updateVariant(idx, "is_active", e.target.checked)} />
-                    {v.is_active ? "ACTIVE" : "DÉSACTIVÉ"}
-                  </label>
-                  <button type="button" onClick={()=> setVariants(variants.filter((_,i)=>i!==idx))} className="text-xs text-red-600 border border-red-200 py-1.5 hover:bg-red-50">RETIRER</button>
+                {/* Image par couleur — upload 1 image blue, 1 black => select shows correct */}
+                <div className="flex items-center gap-3 bg-zinc-50 border border-zinc-100 p-2">
+                  <div className="w-16 h-16 bg-white border border-zinc-200 overflow-hidden shrink-0">
+                    {v.image_url ? <img src={v.image_url} alt={v.color} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[10px] text-zinc-400">Aucune</div>}
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-[10px] tracking-widest">IMAGE POUR COULEUR {v.color.toUpperCase() || "—"} — quand client sélectionne {v.color}, il voit cette image</label>
+                    <div className="flex gap-2 mt-1">
+                      <label className="text-xs border border-zinc-300 bg-white px-3 py-1.5 cursor-pointer hover:bg-zinc-50">
+                        <input type="file" accept="image/*" onChange={e=> e.target.files?.[0] && handleVariantImage(idx, e.target.files[0])} className="hidden" />
+                        UPLOADER IMAGE {v.color}
+                      </label>
+                      {imageUrls.length>0 && (
+                        <select value={v.image_url || ""} onChange={e=> updateVariant(idx, "image_url", e.target.value || null)} className="text-xs border border-zinc-200 px-2 py-1 bg-white">
+                          <option value="">— Choisir parmi images produit —</option>
+                          {imageUrls.map((u,i)=> <option key={i} value={u}>Image {i+1}</option>)}
+                        </select>
+                      )}
+                      {v.image_url && <button type="button" onClick={()=> updateVariant(idx, "image_url", null)} className="text-xs text-zinc-500 underline">Retirer</button>}
+                    </div>
+                  </div>
+                  <div className="hidden sm:block text-[11px] text-zinc-500 max-w-[160px]">Ex: upload 1 sac bleu + 1 sac noir. Le noir verra image noire.</div>
                 </div>
               </div>
             ))}

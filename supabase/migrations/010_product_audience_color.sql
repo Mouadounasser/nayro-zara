@@ -3,9 +3,10 @@ alter table products add column if not exists audience text default 'unisex' che
 alter table products add column if not exists primary_color text;
 alter table products add column if not exists primary_color_name text;
 
--- Variants: allow is_active per variant (if 0 stock = inactive, but explicit toggle)
+-- Variants: allow is_active per variant (if 0 stock = inactive, but explicit toggle) + image per color
 alter table product_variants add column if not exists is_active boolean default true;
 alter table product_variants add column if not exists color_hex text;
+alter table product_variants add column if not exists image_url text;
 
 -- Index for filtering
 create index if not exists idx_products_audience on products(audience);
