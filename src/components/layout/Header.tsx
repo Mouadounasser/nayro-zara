@@ -32,18 +32,18 @@ export function Header() {
         </div>
 
         <div className="mx-auto max-w-[1400px] px-4 lg:px-8">
-          <div className="flex h-[64px] items-center justify-between gap-4">
-            {/* Mobile menu button */}
-            <button onClick={() => setMobileOpen(true)} className="md:hidden p-2 -ml-2" aria-label="Menu">
+          <div className="relative flex h-[64px] items-center justify-between gap-4">
+            {/* Mobile menu button — left */}
+            <button onClick={() => setMobileOpen(true)} className="md:hidden p-2 -ml-2 z-10" aria-label="Menu">
               <Menu size={20} />
             </button>
 
-            {/* Logo — smooth half white/half black editorial (soft blend, premium) */}
+            {/* Logo — centered on phone, left on desktop */}
             <Link
               href="/"
               aria-label="NAYRO home"
-              className="relative inline-flex items-center justify-center px-[20px] py-[9px] overflow-hidden border border-black/[0.08] select-none group isolate will-change-transform"
-              style={{ transform: "translateZ(0)", backfaceVisibility: "hidden" as const, borderRadius: 2 }}
+              className="absolute left-1/2 -translate-x-1/2 md:relative md:left-auto md:translate-x-0 inline-flex items-center justify-center px-[20px] py-[9px] overflow-hidden border border-black/[0.08] select-none group isolate will-change-transform z-10"
+              style={{ backfaceVisibility: "hidden" as const, borderRadius: 2 }}
             >
               {/* background — smooth 50/50 blend, not harsh line */}
               <span
@@ -85,8 +85,8 @@ export function Header() {
               ))}
             </nav>
 
-            {/* Icons */}
-            <div className="flex items-center gap-1 md:gap-2">
+            {/* Icons — right */}
+            <div className="flex items-center gap-1 md:gap-2 z-10">
               <Link href="/search" className="p-2 hover:bg-zinc-100 transition-colors" aria-label="Search">
                 <Search size={18} strokeWidth={1.5} />
               </Link>
