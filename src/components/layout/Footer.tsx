@@ -32,15 +32,12 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="tracking-[0.2em] text-xs mb-4 opacity-60">SUIVEZ-NOUS</h3>
-            <p className="text-sm leading-relaxed opacity-70 mb-4">
-              Be the first to discover what&apos;s next.<br />
-              Inscrivez-vous à notre newsletter.
-            </p>
-            <form className="flex border-b border-white/20">
-              <input placeholder="Votre email" className="bg-transparent flex-1 py-3 text-sm placeholder:text-white/40 focus:outline-none" />
-              <button type="submit" className="text-xs tracking-[0.2em] px-4">OK</button>
-            </form>
+            <h3 className="tracking-[0.2em] text-xs mb-4 opacity-60">CONTACT</h3>
+            <div className="space-y-3 text-sm opacity-70">
+              <p><span className="opacity-50">WhatsApp</span><br /><a href="https://wa.me/212689363596" target="_blank" className="hover:text-white hover:underline underline-offset-4">+212 6 89 36 35 96</a> <span className="text-xs opacity-50">— Réponse &lt;2h</span></p>
+              <p><span className="opacity-50">Email</span><br /><a href="mailto:contact@nayro.ma" className="hover:text-white hover:underline underline-offset-4">contact@nayro.ma</a></p>
+              <p><span className="opacity-50">Showroom</span><br />Casablanca — Sur rendez-vous</p>
+            </div>
           </div>
         </div>
 

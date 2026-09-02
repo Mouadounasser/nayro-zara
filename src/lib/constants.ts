@@ -36,7 +36,7 @@ export const SHOE_SIZES = ["36", "37", "38", "39", "40", "41", "42", "43", "44"]
 
 export const DEFAULT_SETTINGS = {
   store_name: "NAYRO",
-  whatsapp_number: "212600000000",
+  whatsapp_number: "212689363596",
   instagram: "https://instagram.com/nayro.shop",
   delivery_fee: 30,
   free_delivery_threshold: 50,

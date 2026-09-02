@@ -7,12 +7,12 @@ export default function ContactPage() {
         <div className="space-y-6 text-sm">
           <div>
             <h3 className="tracking-[0.2em] text-xs mb-2">WHATSAPP</h3>
-            <p className="text-zinc-600">+212 6 XX XX XX XX</p>
+            <a href="https://wa.me/212689363596" target="_blank" className="text-zinc-600 hover:text-black hover:underline underline-offset-4">+212 6 89 36 35 96</a>
             <p className="text-xs text-zinc-400 mt-1">Réponse sous 2h, lun–sam 9h–19h</p>
           </div>
           <div>
             <h3 className="tracking-[0.2em] text-xs mb-2">EMAIL</h3>
-            <p className="text-zinc-600">hello@nayro.ma</p>
+            <a href="mailto:contact@nayro.ma" className="text-zinc-600 hover:text-black hover:underline underline-offset-4">contact@nayro.ma</a>
           </div>
           <div>
             <h3 className="tracking-[0.2em] text-xs mb-2">SHOWROOM</h3>

@@ -189,7 +189,7 @@ create table if not exists coupons (
 create table if not exists settings (
   id uuid primary key default gen_random_uuid(),
   store_name text default 'NAYRO',
-  whatsapp_number text default '212600000000',
+  whatsapp_number text default '212689363596',
   instagram text default 'https://instagram.com/nayro',
   delivery_fee int default 30,
   free_delivery_threshold int default 600,
@@ -218,5 +218,5 @@ create trigger trg_products_updated before update on products for each row execu
 
 -- Insert default settings
 insert into settings (store_name, whatsapp_number, delivery_fee, free_delivery_threshold)
-values ('NAYRO', '212600000000', 30, 600)
+values ('NAYRO', '212689363596', 30, 600)
 on conflict do nothing;
