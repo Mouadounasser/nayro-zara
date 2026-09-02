@@ -16,9 +16,17 @@ export function Header() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
-    window.addEventListener("scroll", onScroll)
+    window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
+
+  useEffect(() => {
+    if (!mobileOpen) return
+    const onEsc = (e: KeyboardEvent) => { if (e.key === "Escape") setMobileOpen(false) }
+    window.addEventListener("keydown", onEsc)
+    document.body.style.overflow = "hidden"
+    return () => { window.removeEventListener("keydown", onEsc); document.body.style.overflow = "" }
+  }, [mobileOpen])
 
   return (
     <>
@@ -26,15 +34,16 @@ export function Header() {
         "sticky top-0 z-40 w-full border-b bg-[#fdfcf8]/95 backdrop-blur supports-[backdrop-filter]:bg-[#fdfcf8]/80 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-[background-color,border-color]",
         scrolled ? "border-zinc-200 shadow-[0_2px_20px_rgba(0,0,0,0.06)]" : "border-transparent"
       )}>
-        {/* Top bar */}
-        <div className="hidden md:flex h-7 items-center justify-center bg-black text-white text-[10px] tracking-[0.2em]">
-          LIVRAISON GRATUITE DÈS 50 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON
+        {/* Top bar — visible on mobile for COD reassurance */}
+        <div className="flex h-7 items-center justify-center bg-black text-white text-[9px] md:text-[10px] tracking-[0.15em] md:tracking-[0.2em] px-2 text-center">
+          <span className="hidden sm:inline">LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+          <span className="sm:hidden">LIVRAISON GRATUITE DÈS 299 MAD • PAIEMENT À LA LIVRAISON</span>
         </div>
 
         <div className="mx-auto max-w-[1400px] px-4 lg:px-8">
           <div className="relative flex h-[64px] items-center justify-between gap-4">
-            {/* Mobile menu button — left */}
-            <button onClick={() => setMobileOpen(true)} className="md:hidden p-2 -ml-2 z-10" aria-label="Menu">
+            {/* Mobile menu button — left, 44px */}
+            <button onClick={() => setMobileOpen(true)} className="md:hidden p-3 -ml-2 z-10 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Menu">
               <Menu size={20} />
             </button>
 
@@ -85,19 +94,19 @@ export function Header() {
               ))}
             </nav>
 
-            {/* Icons — right */}
+            {/* Icons — right, 44px min */}
             <div className="flex items-center gap-1 md:gap-2 z-10">
-              <Link href="/search" className="p-2 hover:bg-zinc-100 transition-colors" aria-label="Search">
+              <Link href="/search" className="p-3 min-h-[44px] min-w-[44px] flex items-center justify-center hover:bg-zinc-100 transition-colors" aria-label="Search">
                 <Search size={18} strokeWidth={1.5} />
               </Link>
-              <Link href="/account" className="hidden md:flex p-2 hover:bg-zinc-100 transition-colors" aria-label="Account">
+              <Link href="/account" className="hidden md:flex p-3 min-h-[44px] min-w-[44px] items-center justify-center hover:bg-zinc-100 transition-colors" aria-label="Account">
                 <User size={18} strokeWidth={1.5} />
               </Link>
-              <Link href="/wishlist" className="relative p-2 hover:bg-zinc-100 transition-colors hidden md:flex" aria-label="Wishlist">
+              <Link href="/wishlist" className="relative p-3 min-h-[44px] min-w-[44px] items-center justify-center hover:bg-zinc-100 transition-colors hidden md:flex" aria-label="Wishlist">
                 <Heart size={18} strokeWidth={1.5} />
                 {wishlistCount > 0 && <span className="absolute -top-0.5 -right-0.5 bg-black text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">{wishlistCount}</span>}
               </Link>
-              <button onClick={() => setIsOpen(true)} className="relative p-2 hover:bg-zinc-100 transition-colors" aria-label="Cart">
+              <button onClick={() => setIsOpen(true)} className="relative p-3 min-h-[44px] min-w-[44px] flex items-center justify-center hover:bg-zinc-100 transition-colors" aria-label="Cart">
                 <ShoppingBag size={18} strokeWidth={1.5} />
                 {count > 0 && <span className="absolute -top-0.5 -right-0.5 bg-black text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">{count}</span>}
               </button>
@@ -106,12 +115,12 @@ export function Header() {
         </div>
       </header>
 
-      {/* Mobile fullscreen menu */}
+      {/* Mobile fullscreen menu — a11y dialog */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-50 bg-[#fdfcf8] flex flex-col">
+        <div role="dialog" aria-modal="true" aria-label="Menu" className="fixed inset-0 z-50 bg-[#fdfcf8] flex flex-col animate-in fade-in">
           <div className="flex h-[64px] items-center justify-between px-4 border-b">
             <span className="text-xl tracking-[0.3em]">NAYRO</span>
-            <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="p-2">
+            <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="p-3 min-h-[44px] min-w-[44px] flex items-center justify-center">
               <X size={20} />
             </button>
           </div>

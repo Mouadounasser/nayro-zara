@@ -27,7 +27,7 @@ export default function CartPage() {
           {items.map(item => (
             <div key={`${item.productId}-${item.size}`} className="flex gap-4 border-b border-zinc-100 pb-6">
               <Link href={`/product/${item.slug}`} className="w-28 h-36 bg-zinc-100 relative shrink-0">
-                <Image src={item.image} alt={item.name} fill className="object-cover" unoptimized />
+                <Image src={item.image} alt={item.name} fill sizes="80px" className="object-cover" />
               </Link>
               <div className="flex-1">
                 <Link href={`/product/${item.slug}`} className="text-sm font-medium hover:underline">{item.name.toUpperCase()}</Link>

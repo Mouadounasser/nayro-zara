@@ -35,7 +35,7 @@ export function CartDrawer({ open, onOpenChange }: { open: boolean; onOpenChange
               {items.map(item => (
                 <div key={`${item.productId}-${item.size}`} className="flex gap-4">
                   <div className="w-24 h-32 bg-zinc-100 relative overflow-hidden shrink-0">
-                    <Image src={item.image} alt={item.name} fill className="object-cover" unoptimized />
+                    <Image src={item.image} alt={item.name} fill sizes="64px" className="object-cover" />
                   </div>
                   <div className="flex-1 flex flex-col gap-1">
                     <h3 className="text-xs tracking-wide font-medium leading-tight">{item.name.toUpperCase()}</h3>

@@ -43,8 +43,8 @@ export const DEFAULT_SETTINGS = {
   store_name: "NAYRO",
   whatsapp_number: "212689363596",
   instagram: "https://instagram.com/nayro.shop",
-  delivery_fee: 30,
-  free_delivery_threshold: 50,
+  delivery_fee: 35,
+  free_delivery_threshold: 299,
   cod_enabled: true,
   currency: "MAD",
 }

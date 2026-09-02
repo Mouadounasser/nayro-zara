@@ -37,9 +37,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = React.useCallback((item: CartItem) => {
     setItems(prev => {
-      const idx = prev.findIndex(p => p.productId === item.productId && p.size === item.size)
+      const idx = prev.findIndex(p =>
+        p.productId === item.productId &&
+        (p.variantId ? p.variantId === item.variantId : p.size === item.size && p.color === item.color)
+      )
       if (idx > -1) {
         const next = [...prev]
+        // respect stock if available, but don't exceed
         next[idx] = { ...next[idx], quantity: next[idx].quantity + item.quantity }
         return next
       }
@@ -48,16 +52,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsOpen(true)
   }, [])
 
-  const removeItem = React.useCallback((productId: string, size?: string) => {
-    setItems(prev => prev.filter(p => !(p.productId === productId && p.size === size)))
+  const removeItem = React.useCallback((productId: string, size?: string, variantId?: string, color?: string) => {
+    setItems(prev => prev.filter(p => {
+      if (variantId) return !(p.productId === productId && p.variantId === variantId)
+      if (color !== undefined) return !(p.productId === productId && p.color === color && p.size === size)
+      return !(p.productId === productId && p.size === size)
+    }))
   }, [])
 
-  const updateQuantity = React.useCallback((productId: string, size: string | undefined, quantity: number) => {
+  const updateQuantity = React.useCallback((productId: string, size: string | undefined, quantity: number, variantId?: string, color?: string) => {
     if (quantity <= 0) {
-      removeItem(productId, size)
+      removeItem(productId, size, variantId, color)
       return
     }
-    setItems(prev => prev.map(p => p.productId === productId && p.size === size ? { ...p, quantity } : p))
+    setItems(prev => prev.map(p => {
+      const match = variantId ? p.variantId === variantId : (p.productId === productId && p.size === size && p.color === color)
+      return match ? { ...p, quantity } : p
+    }))
   }, [removeItem])
 
   const clearCart = React.useCallback(() => setItems([]), [])

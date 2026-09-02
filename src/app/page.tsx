@@ -40,13 +40,8 @@ export default async function HomePage() {
                 </Link>
               </div>
               <div className="order-1 md:order-2 relative h-[380px] md:h-[540px] lg:h-[620px] overflow-hidden">
-                <Image
-                  src={img("hero", "https://picsum.photos/seed/nayro-hero-luxera/800/1000")}
-                  alt="NAYRO Hero"
-                  fill
-                  priority
-                  className="object-cover"
-                  unoptimized
+                <Image src={img("hero", "https://picsum.photos/seed/nayro-hero-luxera/800/1000")} alt="NAYRO Hero" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover"
+                 
                 />
               </div>
             </div>
@@ -71,7 +66,7 @@ export default async function HomePage() {
             { key: "category_best", title: "MEILLEURES VENTES", sub: "SHOP NOW →", href: "/shop?filter=bestseller", fallback: "https://picsum.photos/seed/nayro-cat-best/600/800" },
           ].map(c => (
             <Link key={c.title} href={c.href} className="group relative h-[280px] lg:h-[340px] overflow-hidden bg-zinc-100">
-              <Image src={img(c.key, c.fallback)} alt={c.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" unoptimized />
+              <Image src={img(c.key, c.fallback)} alt={c.title} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-black/25 group-hover:bg-black/30 transition-colors" />
               <div className="absolute bottom-4 left-4 text-white">
                 <p className="text-sm tracking-[0.2em]">{c.title}</p>
@@ -103,7 +98,7 @@ export default async function HomePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1,2,3,4].map(i => (
             <div key={i} className="relative aspect-[3/4] overflow-hidden bg-zinc-100">
-              <Image src={img(`lookbook_${i}`, `https://picsum.photos/seed/nayro-look${i}/600/800`)} alt={`Look ${i}`} fill className="object-cover" unoptimized />
+              <Image src={img(`lookbook_${i}`, `https://picsum.photos/seed/nayro-look${i}/600/800`)} alt={`Look ${i}`} fill sizes="(max-width: 768px) 50vw, 33vw" className="object-cover" />
             </div>
           ))}
         </div>
@@ -124,7 +119,7 @@ export default async function HomePage() {
           <div className="p-8 flex flex-col items-center md:items-end gap-4">
             <Link href="/shop?filter=sale" className="border border-white text-xs tracking-[0.2em] px-6 py-3 hover:bg-white hover:text-black transition-colors">SHOP THE SALE</Link>
             <div className="hidden md:block relative w-24 h-24">
-              <Image src={img("sale", "https://picsum.photos/seed/nayro-sale/200/200")} alt="Sale" fill className="object-cover" unoptimized />
+              <Image src={img("sale", "https://picsum.photos/seed/nayro-sale/200/200")} alt="Sale" fill sizes="96px" className="object-cover" />
             </div>
           </div>
         </div>
@@ -160,7 +155,7 @@ export default async function HomePage() {
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
           {[1,2,3,4,5,6].map(i => (
             <a key={i} href="https://instagram.com/nayro.shop" target="_blank" className="relative aspect-square overflow-hidden bg-zinc-100 group">
-              <Image src={img(`instagram_${i}`, `https://picsum.photos/seed/nayro-ig${i}/400/400`)} alt="Instagram" fill className="object-cover group-hover:scale-105 transition-transform" unoptimized />
+              <Image src={img(`instagram_${i}`, `https://picsum.photos/seed/nayro-ig${i}/400/400`)} alt="Instagram" fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover group-hover:scale-105 transition-transform" />
             </a>
           ))}
         </div>
@@ -175,7 +170,7 @@ export default async function HomePage() {
             <Link href="/about" className="inline-block mt-4 text-xs tracking-widest border-b border-black pb-1">READ MORE →</Link>
           </div>
           <div className="hidden sm:block relative w-24 h-32 shrink-0">
-            <Image src={img("story", "https://picsum.photos/seed/nayro-story/200/300")} alt="Our story" fill className="object-cover" unoptimized />
+            <Image src={img("story", "https://picsum.photos/seed/nayro-story/200/300")} alt="Our story" fill sizes="96px" className="object-cover" />
           </div>
         </div>
         <div className="bg-[#f9f1e8] p-8">

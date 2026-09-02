@@ -55,7 +55,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         {[
           { title: "DESCRIPTION", content: product.description },
           { title: "DÉTAILS", content: "Matière premium • Fabrication soignée • Coupe NAYRO • Entretien: nettoyage à sec recommandé." },
-          { title: "LIVRAISON", content: "Livraison partout au Maroc en 2-4 jours ouvrables. Livraison gratuite dès 600 MAD. Paiement à la livraison." },
+          { title: "LIVRAISON", content: `Livraison partout au Maroc en 2-4 jours ouvrables. Livraison gratuite dès ${settings.free_delivery_threshold} MAD. Paiement à la livraison.` },
           { title: "RETOURS", content: "Retours gratuits sous 14 jours. Produit non porté, avec étiquettes." },
           { title: "ENTRETIEN", content: "Lavage délicat à 30°C • Ne pas blanchir • Séchage à plat • Repassage doux." },
         ].map(section => (

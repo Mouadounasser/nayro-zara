@@ -89,14 +89,15 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
     const variant = selectedVariant
     if (!variant || (variant as any).is_active === false) { toast("Variante désactivée", "error"); return }
     if (variant.stock === 0) { toast("Rupture de stock", "error"); return }
+    const variantPrice = (variant as any).price_override ?? product.price
     addItem({
       productId: product.id,
       variantId: variant?.id,
       slug: product.slug,
       name: product.name,
-      price: product.price,
-      compare_at_price: product.compare_at_price,
-      image: (variant as any).image_url || product.images[activeImage]?.url || product.images[0]?.url || "",
+      price: variantPrice,
+      compare_at_price: (variant as any).price_override ? product.price : product.compare_at_price,
+      image: (variant as any).image_urls?.[0] || (variant as any).image_url || displayImages[activeImage]?.url || product.images[0]?.url || "",
       size: variant.size || undefined,
       color: variant.color || undefined,
       quantity,
@@ -120,7 +121,7 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
       <div className="space-y-4">
         <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden border border-zinc-100">
           {mainImageUrl && (
-            <Image key={mainImageUrl} src={mainImageUrl} alt={mainImageAlt || product.name} fill className="object-cover transition-opacity duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]" unoptimized priority />
+            <Image key={mainImageUrl} src={mainImageUrl} alt={mainImageAlt || product.name} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover transition-opacity duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]" priority />
           )}
           {selectedVariant && (selectedVariant as any).image_url && (
             <span className="absolute bottom-3 left-3 bg-black text-white text-[11px] tracking-widest px-2 py-1"> {selectedVariant.color} </span>
@@ -129,7 +130,7 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
         <div className="flex gap-2 overflow-x-auto pb-1">
           {displayImages.map((img: any, idx: number) => (
             <button key={img.id || img.url} onClick={() => setActiveImage(idx)} className={cn("relative w-20 h-24 bg-zinc-100 shrink-0 overflow-hidden border", activeImage === idx ? "border-black" : "border-transparent")}>
-              <Image src={img.url} alt={img.alt || ""} fill className="object-cover" unoptimized />
+              <Image src={img.url} alt={img.alt || ""} fill sizes="80px" className="object-cover" />
             </button>
           ))}
         </div>
@@ -143,8 +144,9 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
         <p className="text-sm text-zinc-500 mb-4">{product.short_description}</p>
 
         <div className="flex items-center gap-3 mb-6">
-          <span className="text-xl font-medium">{formatMAD(product.price)}</span>
-          {product.compare_at_price && <span className="text-sm text-zinc-400 line-through">{formatMAD(product.compare_at_price)}</span>}
+          <span className="text-xl font-medium">{formatMAD((selectedVariant as any)?.price_override ?? product.price)}</span>
+          {(selectedVariant as any)?.price_override && <span className="text-sm text-zinc-400 line-through">{formatMAD(product.price)}</span>}
+          {!((selectedVariant as any)?.price_override) && product.compare_at_price && <span className="text-sm text-zinc-400 line-through">{formatMAD(product.compare_at_price)}</span>}
           {selectedVariant && (selectedVariant.stock < 5 && selectedVariant.stock > 0) && <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1">Plus que {selectedVariant.stock} en stock</span>}
           {selectedVariant && selectedVariant.stock === 0 && <span className="text-xs bg-red-100 text-red-700 px-2 py-1">RUPTURE</span>}
         </div>
@@ -182,7 +184,7 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
                     title={c.name}
                   >
                     {c.image_url ? (
-                      <Image src={c.image_url} alt={c.name} fill className="object-cover" unoptimized />
+                      <Image src={c.image_url} alt={c.name} fill sizes="64px" className="object-cover" />
                     ) : (
                       <span className="w-8 h-8 rounded-full border border-zinc-200" style={{background: c.hex || "#0a0a0a"}} />
                     )}

@@ -111,7 +111,7 @@ export function HeroCarousel({ banners }: { banners: Banner[] }) {
                   priority={i === 0}
                   sizes="100vw"
                   className="object-cover"
-                  unoptimized
+                 
                   style={{ transform: "translateZ(0)" }}
                 />
               </div>
@@ -270,7 +270,7 @@ export function HeroCarousel({ banners }: { banners: Banner[] }) {
                     <span className="opacity-70 group-hover/discover:opacity-100 transition-opacity">↗</span>
                   </Link>
                 </div>
-                <p className="mt-3 text-[10px] tracking-[0.14em] text-white/60 hidden sm:block" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>Livraison 50 MAD • Retour 14 jours • Paiement à la livraison</p>
+                <p className="mt-3 text-[10px] tracking-[0.14em] text-white/60 hidden sm:block" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>Livraison 35 MAD • Gratuite dès 299 MAD • Retour 14 jours</p>
               </div>
             )
           })}
