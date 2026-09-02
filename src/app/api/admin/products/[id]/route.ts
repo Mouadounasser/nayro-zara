@@ -16,6 +16,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const supabase = createServiceClient() || await createClient()
   if (!supabase) return NextResponse.json({ error: "Supabase not configured" }, { status: 400 })
 
+  if (body.audience && !["men","women"].includes(body.audience)) {
+    return NextResponse.json({ error: "Audience doit être Men ou Women" }, { status: 400 })
+  }
   const { data, error } = await supabase.from("products").update({
     slug: body.slug,
     name: body.name,
@@ -25,7 +28,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     compare_at_price: body.compare_at_price || null,
     sku: body.sku,
     category_slug: body.category_slug,
-    audience: body.audience || "unisex",
+    audience: body.audience,
     primary_color: body.primary_color || null,
     primary_color_name: body.primary_color_name || null,
     is_active: body.is_active,

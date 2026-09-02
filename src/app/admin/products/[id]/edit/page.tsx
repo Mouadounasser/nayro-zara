@@ -27,10 +27,8 @@ const COLORS = [
 ] as const
 
 const AUDIENCES = [
-  { value: "women", label: "Femme", sub: "Women" },
-  { value: "men", label: "Homme", sub: "Men" },
-  { value: "unisex", label: "Unisex", sub: "Unisex" },
-  { value: "kids", label: "Enfant", sub: "Kids" },
+  { value: "women", label: "Women", sub: "FEMME" },
+  { value: "men", label: "Men", sub: "HOMME" },
 ] as const
 
 export default function EditProductPage() {
@@ -60,12 +58,20 @@ export default function EditProductPage() {
   }, [id])
 
   const handleSave = async () => {
+    if(!form.audience || !["men","women"].includes(form.audience)) { toast("Veuillez choisir Men ou Women", "error"); return }
     setSaving(true)
     try {
+      const cleanVariants = variants.map((v:any)=> ({
+        ...v,
+        size: v.size?.trim() ? v.size.trim() : null,
+        color: v.color?.trim() ? v.color.trim() : null,
+        color_hex: v.color?.trim() ? v.color_hex : null,
+        image_url: v.image_url || null,
+      }))
       const res = await fetch(`/api/admin/products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, variants }),
+        body: JSON.stringify({ ...form, variants: cleanVariants }),
       })
       if(!res.ok) throw new Error((await res.json()).error)
       toast("Produit mis à jour", "success")
@@ -225,16 +231,17 @@ export default function EditProductPage() {
             {variants.map((v, idx)=> (
               <div key={idx} className={`border p-3 space-y-3 ${v.is_active===false ? "bg-zinc-50 opacity-60" : "bg-white"}`}>
                 <div className="grid grid-cols-12 gap-2 items-start">
-                  <div className="col-span-3">
-                    <label className="text-[10px] tracking-widest">TAILLE</label>
-                    <Input value={v.size || ""} onChange={e=> updateVariant(idx, "size", e.target.value)} className="rounded-none h-9 mt-1" />
+                <div className="col-span-3">
+                  <label className="text-[10px] tracking-widest">TAILLE <span className="opacity-50">(optionnel)</span></label>
+                  <Input placeholder="— Sans taille" value={v.size || ""} onChange={e=> updateVariant(idx, "size", e.target.value)} className="rounded-none h-9 mt-1" />
+                  <p className="text-[10px] text-zinc-500 mt-1">Vide si pas de taille</p>
+                </div>
+                <div className="col-span-4">
+                  <label className="text-[10px] tracking-widest">COULEUR <span className="opacity-50">(optionnel)</span></label>
+                  <div className="flex gap-2 mt-1">
+                    <span className="w-9 h-9 rounded-full border shrink-0" style={{background: v.color_hex || "#fff"}} />
+                    <Input placeholder="— Sans couleur" value={v.color || ""} onChange={e=> updateVariant(idx, "color", e.target.value)} className="rounded-none h-9 flex-1" />
                   </div>
-                  <div className="col-span-4">
-                    <label className="text-[10px] tracking-widest">COULEUR</label>
-                    <div className="flex gap-2 mt-1">
-                      <span className="w-9 h-9 rounded-full border shrink-0" style={{background: v.color_hex || "#0a0a0a"}} />
-                      <Input value={v.color || ""} onChange={e=> updateVariant(idx, "color", e.target.value)} className="rounded-none h-9 flex-1" />
-                    </div>
                     <div className="flex gap-1 mt-2 flex-wrap">
                       {COLORS.slice(0,8).map(c=> <button key={c.hex} type="button" onClick={()=> updateVariant(idx, "color_hex", c.hex)} className={`w-6 h-6 rounded-full border ${v.color_hex===c.hex ? "border-black" : "border-white shadow"}`} style={{background:c.hex}} />)}
                     </div>

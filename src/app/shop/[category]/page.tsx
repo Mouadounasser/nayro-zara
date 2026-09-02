@@ -3,17 +3,20 @@ import { getProducts } from "@/lib/products"
 import { ProductGrid } from "@/components/product/ProductGrid"
 import { CATEGORIES } from "@/lib/constants"
 
+const AUDIENCE_SLUGS = ["men", "women"] as const
+
 export async function generateStaticParams() {
-  return CATEGORIES.map(c => ({ category: c.slug }))
+  return [...CATEGORIES.map(c => ({ category: c.slug })), ...AUDIENCE_SLUGS.map(a => ({ category: a }))]
 }
 
-export default async function CategoryPage({ params, searchParams }: { params: Promise<{ category: string }>, searchParams: Promise<{ sort?: string }> }) {
+export default async function CategoryPage({ params, searchParams }: { params: Promise<{ category: string }>, searchParams: Promise<{ sort?: string; audience?: string }> }) {
   const { category } = await params
   const { sort } = await searchParams
-  const cat = CATEGORIES.find(c => c.slug === category)
+  const isAudience = (AUDIENCE_SLUGS as readonly string[]).includes(category)
+  const cat = isAudience ? { name: category === "men" ? "MEN" : "WOMEN", slug: category } : CATEGORIES.find(c => c.slug === category)
   if (!cat) notFound()
 
-  let products = await getProducts({ category })
+  let products = isAudience ? await getProducts({ audience: category }) : await getProducts({ category })
   if (sort === "price-asc") products = [...products].sort((a,b) => a.price-b.price)
   if (sort === "price-desc") products = [...products].sort((a,b) => b.price-a.price)
 

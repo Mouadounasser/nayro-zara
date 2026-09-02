@@ -27,10 +27,8 @@ const COLORS = [
 ] as const
 
 const AUDIENCES = [
-  { value: "women", label: "Femme", sub: "Women" },
-  { value: "men", label: "Homme", sub: "Men" },
-  { value: "unisex", label: "Unisex", sub: "Unisex" },
-  { value: "kids", label: "Enfant", sub: "Kids" },
+  { value: "women", label: "Women", sub: "FEMME" },
+  { value: "men", label: "Men", sub: "HOMME" },
 ] as const
 
 export default function NewProductPage() {
@@ -48,7 +46,7 @@ export default function NewProductPage() {
     compare_at_price: "",
     sku: "",
     category_slug: "sacs",
-    audience: "unisex" as string,
+    audience: "" as string,
     primary_color: "#0a0a0a",
     primary_color_name: "Noir",
     description: "",
@@ -88,13 +86,23 @@ export default function NewProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if(!form.name || !form.sku || !form.price) { toast("Nom, SKU et prix requis", "error"); return }
+    if(!form.audience) { toast("Veuillez choisir: Men ou Women (obligatoire)", "error"); return }
     setLoading(true)
     try {
+      // Convert empty size/color to null for optional variants
+      const cleanVariants = variants.map(v=> ({
+        ...v,
+        size: v.size?.trim() ? v.size.trim() : null,
+        color: v.color?.trim() ? v.color.trim() : null,
+        color_hex: v.color?.trim() ? v.color_hex : null,
+        image_url: v.image_url || null,
+      }))
       const payload = {
         ...form,
+        audience: form.audience as "women" | "men",
         price: Number(form.price),
         compare_at_price: form.compare_at_price ? Number(form.compare_at_price) : null,
-        variants,
+        variants: cleanVariants,
         image_urls: imageUrls,
       }
       const res = await fetch("/api/admin/products", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
@@ -189,8 +197,8 @@ export default function NewProductPage() {
               <p className="text-[11px] text-zinc-500 mt-1">Catégorie = famille produit (sacs, accessoires...)</p>
             </div>
             <div>
-              <label className="text-xs tracking-widest">POUR QUI? * — audience</label>
-              <div className="mt-1 grid grid-cols-4 gap-2">
+              <label className="text-xs tracking-widest">POUR QUI? * — requis: Men ou Women</label>
+              <div className="mt-1 grid grid-cols-2 gap-2">
                 {AUDIENCES.map(a=> (
                   <button key={a.value} type="button" onClick={()=> setForm({...form, audience: a.value})} className={`h-11 border text-xs tracking-widest flex flex-col items-center justify-center leading-none ${form.audience===a.value ? "bg-black text-white border-black" : "bg-white border-zinc-200 hover:border-black"}`}>
                     <span>{a.label}</span>
@@ -198,7 +206,7 @@ export default function NewProductPage() {
                   </button>
                 ))}
               </div>
-              <p className="text-[11px] text-zinc-500 mt-1">Filtre boutique: Femme / Homme / Unisex / Enfant</p>
+              <p className="text-[11px] text-zinc-500 mt-1">Obligatoire: Men section = seulement Men, Women = seulement Women. Jamais mélangé.</p>
             </div>
           </div>
 
@@ -284,19 +292,21 @@ export default function NewProductPage() {
               <div key={idx} className={`border p-3 space-y-3 ${v.is_active ? "border-zinc-200 bg-white" : "border-zinc-200 bg-zinc-50 opacity-60"}`}>
                 <div className="grid grid-cols-12 gap-2 items-start">
                   <div className="col-span-3">
-                    <label className="text-[10px] tracking-widest">TAILLE</label>
-                    <Input placeholder="M / 42" value={v.size} onChange={e=> updateVariant(idx, "size", e.target.value)} className="rounded-none h-9 mt-1" />
+                    <label className="text-[10px] tracking-widest">TAILLE <span className="opacity-50">(optionnel)</span></label>
+                    <Input placeholder="— Sans taille" value={v.size} onChange={e=> updateVariant(idx, "size", e.target.value)} className="rounded-none h-9 mt-1" />
+                    <p className="text-[10px] text-zinc-500 mt-1">Laissez vide si pas de taille (ex: sac)</p>
                   </div>
                   <div className="col-span-4">
-                    <label className="text-[10px] tracking-widest">COULEUR</label>
+                    <label className="text-[10px] tracking-widest">COULEUR <span className="opacity-50">(optionnel)</span></label>
                     <div className="flex gap-2 mt-1">
-                      <span className="w-9 h-9 rounded-full border border-zinc-200 shrink-0" style={{background: v.color_hex}} />
-                      <Input placeholder="Noir" value={v.color} onChange={e=> updateVariant(idx, "color", e.target.value)} className="rounded-none h-9 flex-1" />
+                      <span className="w-9 h-9 rounded-full border border-zinc-200 shrink-0" style={{background: v.color_hex || "#fff"}} />
+                      <Input placeholder="— Sans couleur" value={v.color} onChange={e=> updateVariant(idx, "color", e.target.value)} className="rounded-none h-9 flex-1" />
                     </div>
                     <div className="flex gap-1 mt-2 flex-wrap">
                       {COLORS.slice(0,8).map(c=> (
-                        <button key={c.hex} type="button" onClick={()=> updateVariant(idx, "color_hex", c.hex)} className={`w-6 h-6 rounded-full border ${v.color_hex===c.hex ? "border-black" : "border-white shadow"}`} style={{background:c.hex}} title={c.name} />
+                        <button key={c.hex} type="button" onClick={()=> { updateVariant(idx, "color_hex", c.hex); if(!v.color) updateVariant(idx, "color", c.name) }} className={`w-6 h-6 rounded-full border ${v.color_hex===c.hex ? "border-black" : "border-white shadow"}`} style={{background:c.hex}} title={c.name} />
                       ))}
+                      <button type="button" onClick={()=> updateVariant(idx, "color", "")} className="text-[10px] underline ml-1">Effacer</button>
                     </div>
                   </div>
                   <div className="col-span-2">
@@ -311,32 +321,39 @@ export default function NewProductPage() {
                     <button type="button" onClick={()=> setVariants(variants.filter((_,i)=>i!==idx))} className="text-xs text-red-600 border border-red-200 py-1.5 hover:bg-red-50">RETIRER</button>
                   </div>
                 </div>
-                {/* Image par couleur — upload 1 image blue, 1 black => select shows correct */}
+                {/* Image par couleur — chaque couleur a ses propres images */}
                 <div className="flex items-center gap-3 bg-zinc-50 border border-zinc-100 p-2">
                   <div className="w-16 h-16 bg-white border border-zinc-200 overflow-hidden shrink-0">
                     {v.image_url ? <img src={v.image_url} alt={v.color} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[10px] text-zinc-400">Aucune</div>}
                   </div>
                   <div className="flex-1">
-                    <label className="text-[10px] tracking-widest">IMAGE POUR COULEUR {v.color.toUpperCase() || "—"} — quand client sélectionne {v.color}, il voit cette image</label>
-                    <div className="flex gap-2 mt-1">
+                    <label className="text-[10px] tracking-widest">IMAGE POUR { (v.color || "CETTE VARIANTE").toUpperCase()} {v.color ? `— quand client sélectionne ${v.color}, galerie switch` : "— s’affiche si variante sélectionnée"}</label>
+                    <div className="flex gap-2 mt-1 flex-wrap">
                       <label className="text-xs border border-zinc-300 bg-white px-3 py-1.5 cursor-pointer hover:bg-zinc-50">
                         <input type="file" accept="image/*" onChange={e=> e.target.files?.[0] && handleVariantImage(idx, e.target.files[0])} className="hidden" />
-                        UPLOADER IMAGE {v.color}
+                        UPLOADER {v.color || "IMAGE"}
                       </label>
                       {imageUrls.length>0 && (
-                        <select value={v.image_url || ""} onChange={e=> updateVariant(idx, "image_url", e.target.value || null)} className="text-xs border border-zinc-200 px-2 py-1 bg-white">
+                        <select value={v.image_url || ""} onChange={e=> updateVariant(idx, "image_url", e.target.value || null)} className="text-xs border border-zinc-200 px-2 py-1 bg-white max-w-[200px]">
                           <option value="">— Choisir parmi images produit —</option>
                           {imageUrls.map((u,i)=> <option key={i} value={u}>Image {i+1}</option>)}
                         </select>
                       )}
                       {v.image_url && <button type="button" onClick={()=> updateVariant(idx, "image_url", null)} className="text-xs text-zinc-500 underline">Retirer</button>}
                     </div>
+                    <p className="text-[10px] text-zinc-500 mt-1">Optionnel — si vide, galerie produit par défaut.</p>
                   </div>
-                  <div className="hidden sm:block text-[11px] text-zinc-500 max-w-[160px]">Ex: upload 1 sac bleu + 1 sac noir. Le noir verra image noire.</div>
+                  <div className="hidden sm:block text-[11px] text-zinc-500 max-w-[160px]">Ex: 1 sac bleu (image bleue) + 1 noir (image noire) → switch fluide.</div>
                 </div>
               </div>
             ))}
-            {variants.length===0 && <p className="text-xs text-zinc-500 border border-dashed p-6 text-center">Aucune variante — ajoutez au moins une taille/couleur</p>}
+            {variants.length===0 && (
+              <div className="border border-dashed p-6 text-center space-y-2">
+                <p className="text-xs text-zinc-500">Aucune variante — produit simple sans taille/couleur</p>
+                <p className="text-[11px] text-zinc-400">Le produit sera vendu tel quel, sans sélecteur. Stock géré au niveau produit.</p>
+                <button type="button" onClick={()=> setVariants([{ size: "", color: "", color_hex: "#0a0a0a", image_url: null, stock: 10, is_active: true }])} className="text-xs border border-black px-3 py-1">Ajouter variante simple</button>
+              </div>
+            )}
           </div>
         </div>
 

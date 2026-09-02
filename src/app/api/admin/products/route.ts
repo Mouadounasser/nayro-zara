@@ -7,6 +7,9 @@ export async function POST(req: NextRequest) {
   if (!supabase) {
     return NextResponse.json({ error: "Supabase not configured. Set NEXT_PUBLIC_SUPABASE_URL and keys." }, { status: 400 })
   }
+  if (!body.audience || !["men","women"].includes(body.audience)) {
+    return NextResponse.json({ error: "Audience requis: Men ou Women" }, { status: 400 })
+  }
   const { data: product, error } = await supabase.from("products").insert({
     slug: body.slug,
     name: body.name,
@@ -16,7 +19,7 @@ export async function POST(req: NextRequest) {
     compare_at_price: body.compare_at_price || null,
     sku: body.sku,
     category_slug: body.category_slug,
-    audience: body.audience || "unisex",
+    audience: body.audience,
     primary_color: body.primary_color || null,
     primary_color_name: body.primary_color_name || null,
     is_active: body.is_active ?? true,
@@ -42,14 +45,14 @@ export async function POST(req: NextRequest) {
     const { error: varErr } = await supabase.from("product_variants").insert(variants)
     if (varErr) console.error("Variant insert error", varErr)
   } else {
-    // Default variant
+    // Product without variants (no size/color) — single base variant
     await supabase.from("product_variants").insert({
       product_id: product.id,
-      size: "M",
-      color: body.primary_color_name || "Noir",
-      color_hex: body.primary_color || "#0a0a0a",
+      size: null,
+      color: null,
+      color_hex: null,
       image_url: body.image_urls?.[0] || null,
-      sku: `${body.sku}-M`,
+      sku: body.sku,
       stock: 10,
       is_active: true,
     })

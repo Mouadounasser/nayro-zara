@@ -95,11 +95,11 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
 
   return (
     <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-      {/* Gallery */}
+      {/* Gallery — smooth color switch */}
       <div className="space-y-4">
         <div className="relative aspect-[4/5] bg-zinc-100 overflow-hidden border border-zinc-100">
           {mainImageUrl && (
-            <Image src={mainImageUrl} alt={mainImageAlt || product.name} fill className="object-cover" unoptimized priority />
+            <Image key={mainImageUrl} src={mainImageUrl} alt={mainImageAlt || product.name} fill className="object-cover transition-opacity duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]" unoptimized priority />
           )}
           {selectedVariant && (selectedVariant as any).image_url && (
             <span className="absolute bottom-3 left-3 bg-black text-white text-[11px] tracking-widest px-2 py-1"> {selectedVariant.color} </span>

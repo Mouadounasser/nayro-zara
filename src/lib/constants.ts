@@ -5,12 +5,17 @@ export const CATEGORIES = [
   { slug: "sale", name: "SALE", label: "Promos" },
 ] as const
 
+// Gender is REQUIRED for every product — used for Men/Women filtering
+export const AUDIENCES = [
+  { value: "women", label: "Women", slug: "women" },
+  { value: "men", label: "Men", slug: "men" },
+] as const
+
 export const NAV_LINKS = [
-  { href: "/shop?filter=new", label: "NEW" },
+  { href: "/shop/women", label: "WOMEN" },
+  { href: "/shop/men", label: "MEN" },
   { href: "/shop/sacs", label: "SACS" },
   { href: "/shop/accessories", label: "ACCESSOIRES" },
-  { href: "/shop?filter=bestseller", label: "BEST" },
-  { href: "/shop?filter=sale", label: "SALE" },
 ]
 
 export const MOROCCAN_CITIES = [

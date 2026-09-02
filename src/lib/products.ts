@@ -7,6 +7,7 @@ import type { Product } from "./types"
 
 export async function getProducts(opts?: {
   category?: string
+  audience?: string
   featured?: boolean
   isNew?: boolean
   bestseller?: boolean
@@ -15,7 +16,18 @@ export async function getProducts(opts?: {
 }): Promise<Product[]> {
   if (!isSupabaseConfigured()) {
     let filtered = [...mockProducts]
+    if (opts?.audience) {
+      const a = opts.audience.toLowerCase()
+      filtered = filtered.filter(p => {
+        const pa = (p as any).audience?.toLowerCase()
+        // strict: only requested audience, but keep unisex visible in both for backward compat
+        if (a === "men") return pa === "men" || pa === "unisex" || !pa
+        if (a === "women") return pa === "women" || pa === "unisex" || !pa
+        return pa === a
+      })
+    }
     if (opts?.category) {
+      // category_slug is sub-category (sacs/accessories), not audience
       filtered = filtered.filter(p => p.category_slug === opts.category)
     }
     if (opts?.featured) filtered = filtered.filter(p => p.is_featured)
@@ -43,11 +55,17 @@ export async function getProducts(opts?: {
       .select(`
         *,
         product_images (id, product_id, url, alt, position),
-        product_variants (id, product_id, size, color, sku, stock, price_override)
+        product_variants (id, product_id, size, color, color_hex, image_url, sku, stock, price_override, is_active)
       `)
       .eq("is_active", true)
       .order("created_at", { ascending: false })
 
+    if (opts?.audience) {
+      const a = opts.audience.toLowerCase()
+      // keep unisex visible in both for backward compat with existing data
+      if (a === "men" || a === "women") query = query.in("audience", [a, "unisex"])
+      else query = query.eq("audience", a)
+    }
     if (opts?.category) query = query.eq("category_slug", opts.category)
     if (opts?.featured) query = query.eq("is_featured", true)
     if (opts?.isNew) query = query.eq("is_new", true)
@@ -86,7 +104,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       .select(`
         *,
         product_images (id, product_id, url, alt, position),
-        product_variants (id, product_id, size, color, sku, stock, price_override)
+        product_variants (id, product_id, size, color, color_hex, image_url, sku, stock, price_override, is_active)
       `)
       .eq("slug", slug)
       .single()

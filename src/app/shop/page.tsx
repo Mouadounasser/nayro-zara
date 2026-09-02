@@ -4,9 +4,9 @@ import { ShopFilters } from "@/components/shop/ShopFilters"
 
 export const metadata = { title: "Shop | NAYRO" }
 
-export default async function ShopPage({ searchParams }: { searchParams: Promise<{ filter?: string; sort?: string; q?: string; color?: string; size?: string }> }) {
+export default async function ShopPage({ searchParams }: { searchParams: Promise<{ filter?: string; sort?: string; q?: string; color?: string; size?: string; audience?: string }> }) {
   const params = await searchParams
-  let products = await getProducts({ search: params.q })
+  let products = await getProducts({ search: params.q, audience: params.audience })
 
   if (params.filter === "new") products = products.filter(p => p.is_new)
   if (params.filter === "sale") products = products.filter(p => !!p.compare_at_price)
