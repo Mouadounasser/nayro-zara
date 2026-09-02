@@ -49,16 +49,25 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
     return v[0] || product.variants.find(x => x.color === selectedColor) || product.variants.find(x => x.size === selectedSize) || product.variants[0]
   }, [product.variants, selectedColor, selectedSize])
 
-  // Images filtered by selected color — multi per color (e.g., Brown = 3 images)
+  // Images per variant color — variant's own gallery (multi) takes priority, else product_images tagged by color
   const displayImages = useMemo(() => {
-    if (!selectedColor) return product.images
-    const byColor = product.images.filter((img: any) => img.color === selectedColor)
-    if (byColor.length > 0) return byColor
-    const v = product.variants.find(v => v.color === selectedColor) as any
-    if (v?.image_url) return [{ id: v.id + "-img", product_id: product.id, url: v.image_url, alt: v.color, position: 0, color: v.color, color_hex: v.color_hex } as any]
-    const fallback = product.images.filter((img: any) => !img.color)
-    return fallback.length ? fallback : product.images
-  }, [product.images, product.variants, selectedColor])
+    const v: any = selectedVariant
+    // 1) Variant has its own multi images (Brown = 3 images) — primary
+    if (v?.image_urls && Array.isArray(v.image_urls) && v.image_urls.length > 0) {
+      return v.image_urls.map((url: string, idx: number) => ({ id: `${v.id}-var-${idx}`, product_id: product.id, url, alt: v.color, position: idx, color: v.color, color_hex: v.color_hex } as any))
+    }
+    if (v?.image_url) {
+      return [{ id: v.id + "-img", product_id: product.id, url: v.image_url, alt: v.color, position: 0, color: v.color, color_hex: v.color_hex } as any]
+    }
+    // 2) Product images tagged with selected color
+    if (selectedColor) {
+      const byColor = product.images.filter((img: any) => img.color === selectedColor)
+      if (byColor.length > 0) return byColor
+      const fallback = product.images.filter((img: any) => !img.color)
+      return fallback.length ? fallback : product.images
+    }
+    return product.images
+  }, [product.images, selectedVariant, selectedColor])
 
   // When color changes, reset gallery index for smooth switch
   useEffect(() => { setActiveImage(0) }, [selectedColor])
@@ -118,7 +127,7 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
           )}
         </div>
         <div className="flex gap-2 overflow-x-auto pb-1">
-          {displayImages.map((img: any, idx) => (
+          {displayImages.map((img: any, idx: number) => (
             <button key={img.id || img.url} onClick={() => setActiveImage(idx)} className={cn("relative w-20 h-24 bg-zinc-100 shrink-0 overflow-hidden border", activeImage === idx ? "border-black" : "border-transparent")}>
               <Image src={img.url} alt={img.alt || ""} fill className="object-cover" unoptimized />
             </button>

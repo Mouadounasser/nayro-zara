@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/toast"
 
-type Variant = { id?: string; size: string; color: string; color_hex?: string; image_url?: string | null; stock: number; sku?: string; is_active?: boolean }
+type Variant = { id?: string; size: string; color: string; color_hex?: string; image_url?: string | null; image_urls?: string[]; stock: number; sku?: string; is_active?: boolean }
 
 const COLORS = [
   { name: "Noir", hex: "#0a0a0a" },
@@ -51,8 +51,8 @@ export default function EditProductPage() {
     fetch(`/api/admin/products/${id}`).then(r=>r.json()).then(data => {
       if(data.error) { toast(data.error, "error"); setLoading(false); return }
       setForm(data)
-      setVariants((data.product_variants || data.variants || []).map((v:any)=>({...v, is_active: v.is_active ?? true, color_hex: v.color_hex || "#0a0a0a"})))
-      setImages(data.product_images || data.images || [])
+      setVariants((data.product_variants || data.variants || []).map((v:any)=>({...v, is_active: v.is_active ?? true, color_hex: v.color_hex || "#0a0a0a", image_urls: v.image_urls || (v.image_url ? [v.image_url] : [])})))
+      setImages((data.product_images || data.images || []).map((im:any)=> ({ ...im, color: im.color || null, color_hex: im.color_hex || null })))
       setLoading(false)
     }).catch(()=> setLoading(false))
   }, [id])
@@ -107,12 +107,20 @@ export default function EditProductPage() {
     e.target.value=""
   }
 
-  const addVariant = () => setVariants([...variants, { size: "M", color: form.primary_color_name || "Noir", color_hex: form.primary_color || "#0a0a0a", image_url: null, stock: 5, is_active: true }])
+  const addVariant = () => setVariants([...variants, { size: "", color: form.primary_color_name || "Noir", color_hex: form.primary_color || "#0a0a0a", image_url: null, image_urls: [], stock: 5, is_active: true }])
   const handleVariantImage = async (idx:number, file:File) => {
-    const v = variants[idx]
+    const v = variants[idx] as any
     const fd=new FormData(); fd.append("file", file); fd.append("productId", id); if(v.color) fd.append("color", v.color); if(v.color_hex) fd.append("color_hex", v.color_hex)
     const res=await fetch("/api/admin/upload",{method:"POST",body:fd}); const data=await res.json()
-    if(res.ok){ const copy=[...variants]; (copy[idx] as any).image_url=data.url; setVariants(copy); setImages(prev=>[...prev,{url:data.url,alt:file.name,position:prev.length, color: v.color || null, color_hex: v.color_hex || null}]); toast("Image variante uploadée","success") } else toast(data.error||"Erreur","error")
+    if(res.ok){
+      const copy=[...variants] as any; const cur=copy[idx]; const urls=[...(cur.image_urls||[]), data.url]
+      copy[idx] = { ...cur, image_url: urls[0], image_urls: urls }
+      setVariants(copy); setImages(prev=>[...prev,{url:data.url,alt:file.name,position:prev.length, color: v.color || null, color_hex: v.color_hex || null}]); toast(`Image ${v.color} ajoutée (${urls.length})`,"success")
+    } else toast(data.error||"Erreur","error")
+  }
+  const removeVariantImage = (vIdx:number, imgIdx:number) => {
+    const copy=[...variants] as any; const v=copy[vIdx]; const urls=[...(v.image_urls||[])]; urls.splice(imgIdx,1)
+    copy[vIdx] = { ...v, image_urls: urls, image_url: urls[0] || null }; setVariants(copy)
   }
   const removeVariant = (idx: number) => setVariants(variants.filter((_,i)=>i!==idx))
   const updateVariant = (idx: number, field: string, value: any) => {
@@ -269,26 +277,30 @@ export default function EditProductPage() {
                     <button onClick={()=> removeVariant(idx)} className="text-xs text-red-600 border border-red-200 py-1.5">RETIRER</button>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 bg-zinc-50 border border-zinc-100 p-2">
-                  <div className="w-16 h-16 bg-white border overflow-hidden shrink-0">
-                    {v.image_url ? <img src={v.image_url} alt={v.color} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[10px] text-zinc-400">Aucune</div>}
+                {/* Images par couleur — multi */}
+                <div className="bg-zinc-50 border border-zinc-100 p-3 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] tracking-widest">IMAGES POUR { (v.color || "CETTE COULEUR").toUpperCase()} — {(v as any).image_urls?.length || 0} image(s)</label>
+                    <label className="text-xs border bg-white px-3 py-1 cursor-pointer hover:bg-zinc-50">
+                      <input type="file" accept="image/*" onChange={e=> e.target.files?.[0] && handleVariantImage(idx, e.target.files[0])} className="hidden" />
+                      + AJOUTER IMAGE {v.color || ""}
+                    </label>
                   </div>
-                  <div className="flex-1">
-                    <label className="text-[10px] tracking-widest">IMAGE POUR { (v.color||"COULEUR").toUpperCase()} — s’affiche quand client choisit cette couleur</label>
-                    <div className="flex gap-2 mt-1">
-                      <label className="text-xs border bg-white px-3 py-1.5 cursor-pointer hover:bg-zinc-50">
-                        <input type="file" accept="image/*" onChange={e=> e.target.files?.[0] && handleVariantImage(idx, e.target.files[0])} className="hidden" />
-                        UPLOADER {v.color}
-                      </label>
-                      {images.length>0 && (
-                        <select value={v.image_url || ""} onChange={e=> updateVariant(idx, "image_url", e.target.value || null)} className="text-xs border px-2 py-1 bg-white">
-                          <option value="">— Choisir parmi images produit —</option>
-                          {images.map((im:any,i:number)=> <option key={i} value={im.url}>Image {i+1}</option>)}
-                        </select>
-                      )}
-                      {v.image_url && <button type="button" onClick={()=> updateVariant(idx, "image_url", null)} className="text-xs underline">Retirer</button>}
+                  {((v as any).image_urls && (v as any).image_urls.length > 0) ? (
+                    <div className="flex gap-2 flex-wrap">
+                      {(v as any).image_urls.map((url:string, imgIdx:number)=> (
+                        <div key={imgIdx} className="relative w-20 h-20 bg-white border overflow-hidden group">
+                          <img src={url} alt={v.color} className="w-full h-full object-cover" />
+                          <button type="button" onClick={()=> removeVariantImage(idx, imgIdx)} className="absolute top-0 right-0 bg-black text-white text-xs w-5 h-5 opacity-0 group-hover:opacity-100">✕</button>
+                          {imgIdx===0 && <span className="absolute bottom-0 left-0 bg-black text-white text-[8px] px-1">PRINCIPALE</span>}
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="border border-dashed p-3 text-center bg-white">
+                      <p className="text-xs text-zinc-500">Aucune image pour {v.color || "cette variante"} — uploadez 1 à 5 images.</p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/toast"
 
-type Variant = { size: string; color: string; color_hex: string; image_url: string | null; stock: number; is_active: boolean }
+type Variant = { size: string; color: string; color_hex: string; image_url: string | null; image_urls: string[]; stock: number; is_active: boolean }
 
 const COLORS = [
   { name: "Noir", hex: "#0a0a0a" },
@@ -57,7 +57,7 @@ export default function NewProductPage() {
     is_bestseller: false,
   })
   const [variants, setVariants] = useState<Variant[]>([
-    { size: "One Size", color: "Noir", color_hex: "#0a0a0a", image_url: null, stock: 10, is_active: true },
+    { size: "", color: "Noir", color_hex: "#0a0a0a", image_url: null, image_urls: [], stock: 10, is_active: true },
   ])
 
   useEffect(() => {
@@ -114,21 +114,28 @@ export default function NewProductPage() {
     finally { setLoading(false) }
   }
 
-  const addVariant = () => setVariants([...variants, { size: "", color: form.primary_color_name, color_hex: form.primary_color, image_url: null, stock: 5, is_active: true }])
+  const addVariant = () => setVariants([...variants, { size: "", color: form.primary_color_name, color_hex: form.primary_color, image_url: null, image_urls: [], stock: 5, is_active: true }])
   const handleVariantImage = async (idx:number, file: File) => {
     if(file.size > 5*1024*1024) { toast("Image trop grande (max 5MB)", "error"); return }
     const fd = new FormData(); fd.append("file", file)
     const res = await fetch("/api/admin/upload", {method:"POST", body: fd})
     const data = await res.json()
     if(res.ok){ 
-      updateVariant(idx, "image_url", data.url)
-      const vColor = variants[idx]?.color || form.primary_color_name
-      const vHex = variants[idx]?.color_hex || form.primary_color
-      // also add to product gallery tagged with same color
+      const copy=[...variants]; const v=copy[idx]
+      const newUrls=[...(v.image_urls || []), data.url]
+      copy[idx] = { ...v, image_url: data.url, image_urls: newUrls }
+      setVariants(copy)
+      const vColor = v.color || form.primary_color_name
+      const vHex = v.color_hex || form.primary_color
       if(!images.find(im=>im.url===data.url)) setImages(prev=>[...prev, { url: data.url, color: vColor, color_hex: vHex }])
-      toast("Image variante uploadée", "success") 
+      toast(`Image ${vColor} ajoutée (${newUrls.length}/3)`, "success") 
     }
     else toast(data.error || "Erreur", "error")
+  }
+  const removeVariantImage = (vIdx:number, imgIdx:number) => {
+    const copy=[...variants]; const v=copy[vIdx]; const urls=[...(v.image_urls||[])]; urls.splice(imgIdx,1)
+    copy[vIdx] = { ...v, image_urls: urls, image_url: urls[0] || null }
+    setVariants(copy)
   }
   const updateImageColor = (idx:number, color:string|null) => {
     const copy=[...images]; const hex = color ? (COLORS.find(c=>c.name===color)?.hex || null) : null
@@ -343,29 +350,44 @@ export default function NewProductPage() {
                     <button type="button" onClick={()=> setVariants(variants.filter((_,i)=>i!==idx))} className="text-xs text-red-600 border border-red-200 py-1.5 hover:bg-red-50">RETIRER</button>
                   </div>
                 </div>
-                {/* Image par couleur — chaque couleur a ses propres images */}
-                <div className="flex items-center gap-3 bg-zinc-50 border border-zinc-100 p-2">
-                  <div className="w-16 h-16 bg-white border border-zinc-200 overflow-hidden shrink-0">
-                    {v.image_url ? <img src={v.image_url} alt={v.color} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[10px] text-zinc-400">Aucune</div>}
+                {/* Images par couleur — multi (Brown = 3 images) */}
+                <div className="bg-zinc-50 border border-zinc-100 p-3 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] tracking-widest">IMAGES POUR { (v.color || "CETTE COULEUR").toUpperCase()} — { (v.image_urls?.length || 0)} image(s) {v.color ? `→ client voit ces images quand il choisit ${v.color}` : ""}</label>
+                    <label className="text-xs border border-zinc-300 bg-white px-3 py-1 cursor-pointer hover:bg-zinc-50">
+                      <input type="file" accept="image/*" onChange={e=> e.target.files?.[0] && handleVariantImage(idx, e.target.files[0])} className="hidden" />
+                      + AJOUTER IMAGE {v.color || ""}
+                    </label>
                   </div>
-                  <div className="flex-1">
-                    <label className="text-[10px] tracking-widest">IMAGE POUR { (v.color || "CETTE VARIANTE").toUpperCase()} {v.color ? `— quand client sélectionne ${v.color}, galerie switch` : "— s’affiche si variante sélectionnée"}</label>
-                    <div className="flex gap-2 mt-1 flex-wrap">
-                      <label className="text-xs border border-zinc-300 bg-white px-3 py-1.5 cursor-pointer hover:bg-zinc-50">
-                        <input type="file" accept="image/*" onChange={e=> e.target.files?.[0] && handleVariantImage(idx, e.target.files[0])} className="hidden" />
-                        UPLOADER {v.color || "IMAGE"}
-                      </label>
-                      {images.length>0 && (
-                        <select value={v.image_url || ""} onChange={e=> updateVariant(idx, "image_url", e.target.value || null)} className="text-xs border border-zinc-200 px-2 py-1 bg-white max-w-[200px]">
-                          <option value="">— Choisir parmi images produit —</option>
-                          {images.map((im,i)=> <option key={i} value={im.url}>Image {i+1} {im.color ? `— ${im.color}` : ""}</option>)}
-                        </select>
-                      )}
-                      {v.image_url && <button type="button" onClick={()=> updateVariant(idx, "image_url", null)} className="text-xs text-zinc-500 underline">Retirer</button>}
+                  {(v.image_urls && v.image_urls.length > 0) ? (
+                    <div className="flex gap-2 flex-wrap">
+                      {v.image_urls.map((url:string, imgIdx:number)=> (
+                        <div key={imgIdx} className="relative w-20 h-20 bg-white border overflow-hidden group">
+                          <img src={url} alt={v.color} className="w-full h-full object-cover" />
+                          <button type="button" onClick={()=> removeVariantImage(idx, imgIdx)} className="absolute top-0 right-0 bg-black text-white text-xs w-5 h-5 opacity-0 group-hover:opacity-100">✕</button>
+                          {imgIdx===0 && <span className="absolute bottom-0 left-0 bg-black text-white text-[8px] px-1">PRINCIPALE</span>}
+                        </div>
+                      ))}
                     </div>
-                    <p className="text-[10px] text-zinc-500 mt-1">Optionnel — si vide, galerie produit par défaut.</p>
-                  </div>
-                  <div className="hidden sm:block text-[11px] text-zinc-500 max-w-[160px]">Ex: 1 sac bleu (image bleue) + 1 noir (image noire) → switch fluide.</div>
+                  ) : (
+                    <div className="border border-dashed p-4 text-center bg-white">
+                      <p className="text-xs text-zinc-500">Aucune image pour {v.color || "cette variante"} — uploadez 1 à 5 images. Ex: Brown = 3 images → galerie Brown fluide.</p>
+                    </div>
+                  )}
+                  {images.length>0 && v.image_urls.length===0 && (
+                    <div className="flex gap-2 items-center">
+                      <span className="text-[11px] text-zinc-500">Ou choisir parmi images produit:</span>
+                      <select onChange={e=> {
+                        const url=e.target.value
+                        if(url){
+                          const copy=[...variants]; const cur=copy[idx]; const urls=[...(cur.image_urls||[]), url]; copy[idx]={...cur, image_urls: urls, image_url: urls[0]}; setVariants(copy)
+                        }
+                      }} defaultValue="" className="text-xs border px-2 py-1 bg-white">
+                        <option value="">— Choisir —</option>
+                        {images.map((im,i)=> <option key={i} value={im.url}>Image {i+1} {im.color ? `— ${im.color}` : ""}</option>)}
+                      </select>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -373,7 +395,7 @@ export default function NewProductPage() {
               <div className="border border-dashed p-6 text-center space-y-2">
                 <p className="text-xs text-zinc-500">Aucune variante — produit simple sans taille/couleur</p>
                 <p className="text-[11px] text-zinc-400">Le produit sera vendu tel quel, sans sélecteur. Stock géré au niveau produit.</p>
-                <button type="button" onClick={()=> setVariants([{ size: "", color: "", color_hex: "#0a0a0a", image_url: null, stock: 10, is_active: true }])} className="text-xs border border-black px-3 py-1">Ajouter variante simple</button>
+                <button type="button" onClick={()=> setVariants([{ size: "", color: "", color_hex: "#0a0a0a", image_url: null, image_urls: [], stock: 10, is_active: true }])} className="text-xs border border-black px-3 py-1">Ajouter variante simple</button>
               </div>
             )}
           </div>

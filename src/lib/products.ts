@@ -55,7 +55,7 @@ export async function getProducts(opts?: {
       .select(`
         *,
         product_images (id, product_id, url, alt, position, color, color_hex),
-        product_variants (id, product_id, size, color, color_hex, image_url, sku, stock, price_override, is_active)
+        product_variants (id, product_id, size, color, color_hex, image_url, image_urls, sku, stock, price_override, is_active)
       `)
       .eq("is_active", true)
       .order("created_at", { ascending: false })
@@ -104,7 +104,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       .select(`
         *,
         product_images (id, product_id, url, alt, position, color, color_hex),
-        product_variants (id, product_id, size, color, color_hex, image_url, sku, stock, price_override, is_active)
+        product_variants (id, product_id, size, color, color_hex, image_url, image_urls, sku, stock, price_override, is_active)
       `)
       .eq("slug", slug)
       .single()

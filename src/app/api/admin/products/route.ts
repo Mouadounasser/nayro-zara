@@ -30,15 +30,16 @@ export async function POST(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Variants
+  // Variants — support multi images per color
   if (body.variants && Array.isArray(body.variants) && body.variants.length > 0) {
     const variants = body.variants.map((v: any) => ({
       product_id: product.id,
       size: v.size,
       color: v.color,
       color_hex: v.color_hex || null,
-      image_url: v.image_url || null,
-      sku: v.sku || `${body.sku}-${v.size}`,
+      image_url: v.image_url || (Array.isArray(v.image_urls) && v.image_urls[0]) || null,
+      image_urls: Array.isArray(v.image_urls) ? v.image_urls : (v.image_url ? [v.image_url] : []),
+      sku: v.sku || `${body.sku}-${v.size || v.color || "var"}`,
       stock: Number(v.stock) || 0,
       is_active: v.is_active ?? true,
     }))
@@ -46,12 +47,14 @@ export async function POST(req: NextRequest) {
     if (varErr) console.error("Variant insert error", varErr)
   } else {
     // Product without variants (no size/color) — single base variant
+    const firstImg = Array.isArray(body.images) ? body.images[0]?.url : body.image_urls?.[0]
     await supabase.from("product_variants").insert({
       product_id: product.id,
       size: null,
       color: null,
       color_hex: null,
-      image_url: body.image_urls?.[0] || null,
+      image_url: firstImg || null,
+      image_urls: firstImg ? [firstImg] : [],
       sku: body.sku,
       stock: 10,
       is_active: true,
