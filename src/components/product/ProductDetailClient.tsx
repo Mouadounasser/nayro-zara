@@ -10,6 +10,7 @@ import { useWishlist } from "@/lib/wishlist-context"
 import { useToast } from "@/components/ui/toast"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { QuickOrderForm } from "./QuickOrderForm"
 
 export function ProductDetailClient({ product, whatsappNumber }: { product: Product; whatsappNumber: string }) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
@@ -243,18 +244,20 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
         </div>
 
         <div className="space-y-3">
-          <Button onClick={handleAddToCart} className="w-full h-12 tracking-[0.2em] text-xs rounded-none">
-            AJOUTER AU PANIER — {selectedVariant?.color ? selectedVariant.color.toUpperCase() : ""}
+          <Button onClick={handleAddToCart} className="w-full h-11 tracking-[0.2em] text-xs rounded-none">
+            AJOUTER AU PANIER {selectedVariant?.color ? `— ${selectedVariant.color.toUpperCase()}` : ""}
           </Button>
-          <Link href="/checkout" onClick={handleAddToCart} className="block">
-            <Button variant="outline" className="w-full h-12 tracking-[0.2em] text-xs rounded-none">
-              ACHETER MAINTENANT
-            </Button>
-          </Link>
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full h-11 border border-[#25D366] text-[#25D366] text-xs tracking-[0.2em] hover:bg-[#25D366] hover:text-white transition-colors">
-            COMMANDER VIA WHATSAPP
+          <a href="#quick-order" onClick={(e)=> {e.preventDefault(); document.getElementById('quick-order')?.scrollIntoView({behavior:'smooth'})}} className="flex items-center justify-center w-full h-12 bg-black text-white text-xs tracking-[0.2em] hover:bg-zinc-800 transition-colors">
+            COMMANDER MAINTENANT — COD
           </a>
-          <p className="text-[11px] text-center text-zinc-500">Message prérempli avec couleur/taille/qté — vous confirmez sur WhatsApp 06 89 36 35 96</p>
+          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full h-11 border border-[#25D366] text-[#25D366] text-xs tracking-[0.2em] hover:bg-[#25D366] hover:text-white transition-colors">
+            WHATSAPP 06 89 36 35 96
+          </a>
+          <p className="text-[11px] text-center text-zinc-500">Sans compte • Paiement à la livraison • Confirmation claire</p>
+        </div>
+
+        <div className="mt-8">
+          <QuickOrderForm product={product} selectedVariant={selectedVariant} quantity={quantity} whatsappNumber={whatsappNumber} />
         </div>
 
         <div className="mt-8 text-xs text-zinc-500 space-y-2 border-t border-zinc-200 pt-6">
@@ -264,10 +267,10 @@ export function ProductDetailClient({ product, whatsappNumber }: { product: Prod
         </div>
       </div>
 
-      {/* Mobile sticky bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-zinc-200 p-3 flex gap-3 md:hidden z-30">
-        <Button onClick={handleAddToCart} className="flex-1 h-11 tracking-widest text-xs rounded-none">AJOUTER — {selectedVariant?.color || ""}</Button>
-        <a href={whatsappUrl} target="_blank" className="px-4 h-11 bg-[#25D366] text-white flex items-center text-xs tracking-widest">WHATSAPP</a>
+      {/* Mobile sticky — Commander primary */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-zinc-200 p-3 flex gap-2 md:hidden z-30 safe-bottom">
+        <a href="#quick-order" onClick={(e)=> {e.preventDefault(); document.getElementById('quick-order')?.scrollIntoView({behavior:'smooth'})}} className="flex-1 h-11 bg-black text-white flex items-center justify-center text-xs tracking-[0.2em]">COMMANDER</a>
+        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="px-5 h-11 bg-[#25D366] text-white flex items-center justify-center text-xs tracking-widest">WHATSAPP</a>
       </div>
     </div>
   )
