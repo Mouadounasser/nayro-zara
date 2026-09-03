@@ -39,26 +39,26 @@ export function Header() {
           <div className="absolute inset-0 flex items-center">
             <div className="flex items-center gap-8 whitespace-nowrap will-change-transform animate-marquee hover:[animation-play-state:paused]">
               <span className="text-[10px] tracking-[0.2em] flex items-center gap-8">
-                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span>LIVRAISON GRATUITE PARTOUT AU MAROC • 24/48H • PAIEMENT À LA LIVRAISON</span>
                 <span className="opacity-30">•</span>
-                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span>LIVRAISON GRATUITE PARTOUT AU MAROC • 24/48H • PAIEMENT À LA LIVRAISON</span>
                 <span className="opacity-30">•</span>
-                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span>LIVRAISON GRATUITE PARTOUT AU MAROC • 24/48H • PAIEMENT À LA LIVRAISON</span>
                 <span className="opacity-30">•</span>
-                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span>LIVRAISON GRATUITE PARTOUT AU MAROC • 24/48H • PAIEMENT À LA LIVRAISON</span>
               </span>
               <span aria-hidden className="text-[10px] tracking-[0.2em] flex items-center gap-8">
-                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span>LIVRAISON GRATUITE PARTOUT AU MAROC • 24/48H • PAIEMENT À LA LIVRAISON</span>
                 <span className="opacity-30">•</span>
-                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span>LIVRAISON GRATUITE PARTOUT AU MAROC • 24/48H • PAIEMENT À LA LIVRAISON</span>
                 <span className="opacity-30">•</span>
-                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span>LIVRAISON GRATUITE PARTOUT AU MAROC • 24/48H • PAIEMENT À LA LIVRAISON</span>
                 <span className="opacity-30">•</span>
-                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span>LIVRAISON GRATUITE PARTOUT AU MAROC • 24/48H • PAIEMENT À LA LIVRAISON</span>
               </span>
             </div>
           </div>
-          <style>{`@keyframes marquee { 0% { transform: translateX(0) } 100% { transform: translateX(-50%) } } .animate-marquee { animation: marquee 22s linear infinite; } @media (prefers-reduced-motion: reduce) { .animate-marquee { animation-duration: 0.01ms; } }`}</style>
+          <style>{`@keyframes marquee { 0% { transform: translateX(0) } 100% { transform: translateX(-50%) } } .animate-marquee { animation: marquee 35s linear infinite; } @media (prefers-reduced-motion: reduce) { .animate-marquee { animation-duration: 0.01ms; } }`}</style>
         </div>
 
         <div className="mx-auto max-w-[1400px] px-4 lg:px-8">
