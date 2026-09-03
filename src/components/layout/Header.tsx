@@ -34,10 +34,31 @@ export function Header() {
         "sticky top-0 z-40 w-full border-b bg-[#fdfcf8]/95 backdrop-blur supports-[backdrop-filter]:bg-[#fdfcf8]/80 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-[background-color,border-color]",
         scrolled ? "border-zinc-200 shadow-[0_2px_20px_rgba(0,0,0,0.06)]" : "border-transparent"
       )}>
-        {/* Top bar — visible on mobile for COD reassurance */}
-        <div className="flex h-7 items-center justify-center bg-black text-white text-[9px] md:text-[10px] tracking-[0.15em] md:tracking-[0.2em] px-2 text-center">
-          <span className="hidden sm:inline">LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
-          <span className="sm:hidden">LIVRAISON GRATUITE DÈS 299 MAD • PAIEMENT À LA LIVRAISON</span>
+        {/* Top bar — smooth infinite marquee */}
+        <div className="relative flex h-7 items-center bg-black text-white overflow-hidden select-none">
+          <div className="absolute inset-0 flex items-center">
+            <div className="flex items-center gap-8 whitespace-nowrap will-change-transform animate-marquee hover:[animation-play-state:paused]">
+              <span className="text-[10px] tracking-[0.2em] flex items-center gap-8">
+                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span className="opacity-30">•</span>
+                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span className="opacity-30">•</span>
+                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span className="opacity-30">•</span>
+                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+              </span>
+              <span aria-hidden className="text-[10px] tracking-[0.2em] flex items-center gap-8">
+                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span className="opacity-30">•</span>
+                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span className="opacity-30">•</span>
+                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+                <span className="opacity-30">•</span>
+                <span>LIVRAISON GRATUITE DÈS 299 MAD • RETOURS SOUS 14 JOURS • PAIEMENT À LA LIVRAISON</span>
+              </span>
+            </div>
+          </div>
+          <style>{`@keyframes marquee { 0% { transform: translateX(0) } 100% { transform: translateX(-50%) } } .animate-marquee { animation: marquee 22s linear infinite; } @media (prefers-reduced-motion: reduce) { .animate-marquee { animation-duration: 0.01ms; } }`}</style>
         </div>
 
         <div className="mx-auto max-w-[1400px] px-4 lg:px-8">
